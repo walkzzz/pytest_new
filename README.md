@@ -1,58 +1,58 @@
 # Pytest New
 
-A pytest-based automation testing framework with pywinauto and Allure reporting.
+基于 pytest 的自动化测试框架，集成 pywinauto 和 Allure 报告。
 
-## Features
+## 功能特性
 
-- **Pytest Framework**: Python testing framework
-- **Pywinauto**: Windows UI automation testing
-- **Allure Reports**: Beautiful test reports
-- **YAML Configuration**: Easy-to-use test case configuration
+- **Pytest 框架**: Python 测试框架
+- **Pywinauto**: Windows UI 自动化测试
+- **Allure 报告**: 美观的测试报告
+- **YAML 配置**: 易于使用的测试用例配置
 
-## Requirements
+## 环境要求
 
 - Python 3.10+
-- Windows OS
+- Windows 操作系统
 
-## Installation
+## 安装
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Running Tests
+## 运行测试
 
 ```powershell
-# Run all tests
+# 运行所有测试
 python -m pytest tests --alluredir=allure-results
 
-# Or use the PowerShell script
+# 或使用 PowerShell 脚本
 .\run_test.ps1
 ```
 
-## Generate Allure Report
+## 生成 Allure 报告
 
 ```bash
 allure generate allure-results -o allure-report
 allure open allure-report
 ```
 
-## Project Structure
+## 项目结构
 
 ```
 pytest_new/
 ├── src/
-│   ├── allure/           # Allure helpers
-│   ├── config/           # Configuration parsing
-│   ├── pytest_runner/    # Test runner
-│   └── pywinauto/        # UI automation
+│   ├── allure/           # Allure 辅助工具
+│   ├── config/          # 配置解析
+│   ├── pytest_runner/   # 测试运行器
+│   └── pywinauto/       # UI 自动化
 ├── tests/
-│   ├── configs/          # Test configurations (YAML)
-│   └── test_*.py         # Test cases
-├── requirements.txt     # Python dependencies
-└── run_test.ps1         # Run script
+│   ├── configs/         # 测试配置 (YAML)
+│   └── test_*.py       # 测试用例
+├── requirements.txt    # Python 依赖
+└── run_test.ps1        # 运行脚本
 ```
 
-## Configuration
+## 配置说明
 
-Test cases are defined in YAML files under `tests/configs/`.
+测试用例定义在 `tests/configs/` 目录下的 YAML 文件中。
