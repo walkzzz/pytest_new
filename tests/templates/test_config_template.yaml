@@ -1,0 +1,448 @@
+# 自动化测试配置模板
+# 版本: 1.0
+# 用途: 提供通用的测试配置结构
+# 框架: src目录下的控件和执行器
+
+# 应用配置
+app:
+  process_name: "应用进程名.exe"  # 目标应用的进程名
+  backend: "uia"  # 自动化后端 (uia, win32)
+  main_window:
+    title: "主窗口标题"  # 主窗口标题
+    state: "visible"  # 窗口状态 (visible, exists)
+
+# 控件配置 (对应 src/controls/control_factory.py)
+controls:
+  # 基础控件
+  button_example:
+    type: "button"
+    locator:
+      title: "按钮文本"
+
+  edit_example:
+    type: "edit"
+    locator:
+      title: "输入框标题"
+      best_match: "Edit1"
+
+  image_example:
+    type: "image"
+    locator:
+      best_match: "Image1"
+
+  # 复杂控件
+  combobox_example:
+    type: "combobox"
+    locator:
+      title: "下拉框标题"
+
+  listbox_example:
+    type: "listbox"
+    locator:
+      title: "列表框标题"
+
+  tab_example:
+    type: "tab"
+    locator:
+      title: "标签页标题"
+
+  tree_example:
+    type: "tree"
+    locator:
+      title: "树形控件标题"
+
+  progressbar_example:
+    type: "progressbar"
+    locator:
+      title: "进度条标题"
+
+  slider_example:
+    type: "slider"
+    locator:
+      title: "滑块标题"
+
+  calendar_example:
+    type: "calendar"
+    locator:
+      title: "日历标题"
+
+  statusbar_example:
+    type: "statusbar"
+    locator:
+      title: "状态栏标题"
+
+  menu_example:
+    type: "menu"
+    locator:
+      title: "菜单标题"
+
+  toolbar_example:
+    type: "toolbar"
+    locator:
+      title: "工具栏标题"
+
+  hyperlink_example:
+    type: "hyperlink"
+    locator:
+      title: "超链接标题"
+
+  groupbox_example:
+    type: "groupbox"
+    locator:
+      title: "分组框标题"
+
+  scrollbar_example:
+    type: "scrollbar"
+    locator:
+      title: "滚动条标题"
+
+  richedit_example:
+    type: "richedit"
+    locator:
+      title: "富文本标题"
+
+  label_example:
+    type: "label"
+    locator:
+      title: "标签文本"
+
+  dialog_example:
+    type: "dialog"
+    locator:
+      title: "对话框标题"
+
+# 测试数据
+test_data:
+  test_case_1:
+    username: "test_user"
+    password: "test_password"
+
+  test_case_2:
+    username: "another_user"
+    password: "another_password"
+
+# 测试用例
+test_cases:
+  test_case_1:
+    description: "测试用例1描述"
+    test_data: "test_case_1"
+
+    # Allure报告配置
+    epic: "模块名称"           # 史诗 (Allure epics)
+    feature: "功能名称"         # 功能 (Allure features)
+    story: "用户故事"          # 用户故事 (Allure stories)
+    severity: "normal"         # 严重级别: blocker, critical, normal, minor, trivial
+    tags: ["标签1", "标签2"]    # 自定义标签
+    suite: "测试套件"          # 套件名称
+    lead: "测试负责人"         # 负责人
+    owner: "测试人员"          # 所有者
+    layer: "e2e"              # 层级: e2e, integration, unit
+    link_url: "http://docs.example.com"  # 文档链接
+    link_name: "文档链接名称"
+    issue_url: "http://jira.example.com/PROJ-123"  # Issue链接
+    issue_name: "Issue名称"
+
+    steps:
+      - name: "step-001: 步骤1名称"
+        action:
+          control: "button_example"
+          method: "click"
+          params: []
+        assertions:
+          - control: "button_example"
+            checks: ["visible", "enabled"]
+        timeout: "normal"
+
+      - name: "step-002: 步骤2名称"
+        action:
+          control: "edit_example"
+          method: "set_text"
+          params: ["{{test_data.username}}"]
+        assertions:
+          - control: "edit_example"
+            checks: ["visible", "enabled", "text_equal"]
+        timeout: "normal"
+
+      - name: "step-003: 点击图片"
+        action:
+          control: "image_example"
+          method: "click_input"
+          params: []
+        assertions:
+          - control: "image_example"
+            checks: ["visible"]
+        timeout: "normal"
+
+# 等待时间配置
+timeouts:
+  short: 0.2
+  normal: 0.5
+  long: 1.0
+
+# 配置说明:
+
+# 控件工厂 (对应 src/controls/control_factory.py) - 全部20个:
+#   button: 按钮控件
+#   edit: 文本输入框
+#   combobox: 下拉框
+#   listbox: 列表框
+#   tab: 标签页
+#   tree: 树形控件
+#   progressbar: 进度条
+#   slider: 滑块
+#   calendar: 日历
+#   statusbar: 状态栏
+#   menu: 菜单
+#   toolbar: 工具栏
+#   hyperlink: 超链接
+#   groupbox: 分组框
+#   scrollbar: 滚动条
+#   richedit: 富文本
+#   label: 标签
+#   dialog: 对话框
+#   image: 图片控件
+#   base: 基础控件
+
+# 控件自带方法 (对应 src/controls/*.py):
+#   MenuControl (menu):
+#       - click_menu_item: 点击菜单项
+#       - get_menu_items: 获取菜单项列表
+#       - is_menu_item_enabled: 菜单项是否可用
+#
+#   ToolbarControl (toolbar):
+#       - click_button: 点击工具栏按钮
+#       - click_button_by_index: 按索引点击工具栏按钮
+#       - get_buttons: 获取工具栏按钮列表
+#
+#   HyperlinkControl (hyperlink):
+#       - get_link_text: 获取超链接文本
+#       - get_link_url: 获取超链接URL
+#
+#   GroupBoxControl (groupbox):
+#       - get_group_text: 获取分组框文本
+#       - get_children_controls: 获取子控件列表
+#
+#   ScrollBarControl (scrollbar):
+#       - set_position: 设置滚动位置
+#       - get_position: 获取滚动位置
+#       - scroll_up: 向上滚动
+#       - scroll_down: 向下滚动
+#
+#   RichEditControl (richedit):
+#       - set_text: 设置富文本
+#       - get_text: 获取富文本
+#       - set_font: 设置字体
+#
+#   LabelControl (label):
+#       - get_text: 获取标签文本
+#       - is_text_matched: 文本是否匹配
+#
+#   DialogControl (dialog):
+#       - close: 关闭对话框
+#       - get_dialog_title: 获取对话框标题
+#       - confirm: 确认对话框
+#       - cancel: 取消对话框
+#
+#   ImageControl (image):
+#       - click_input: 图片点击输入
+#       - capture_as_image: 截图
+#       - get_image_size: 获取图片尺寸
+#
+#   TreeControl (tree):
+#       - expand: 展开节点
+#       - collapse: 折叠节点
+#       - select: 选择节点
+#       - get_children: 获取子节点
+#       - get_selected_item: 获取选中节点
+#
+#   ProgressBarControl (progressbar):
+#       - get_value: 获取进度值
+#       - get_range: 获取范围
+#       - is_complete: 是否完成
+#
+#   SliderControl (slider):
+#       - set_value: 设置滑块值
+#       - get_value: 获取滑块值
+#       - get_range: 获取范围
+#
+#   CalendarControl (calendar):
+#       - set_date: 设置日期
+#       - get_date: 获取日期
+#       - set_time: 设置时间
+#       - get_time: 获取时间
+#
+#   StatusBarControl (statusbar):
+#       - get_panel_text: 获取面板文本
+#       - get_panel_count: 获取面板数量
+#
+#   ButtonControl (button):
+#       - is_checked: 检查是否选中
+#       - check: 选中
+#       - uncheck: 取消选中
+#
+#   EditControl (edit):
+#       - set_text: 设置文本
+#       - get_text: 获取文本
+#       - clear_text: 清除文本
+#       - type_text: 输入文本
+#       - is_editable: 检查是否可编辑
+#
+#   ComboBoxControl (combobox):
+#       - select: 选择项
+#       - select_by_index: 按索引选择
+#       - get_items: 获取所有项
+#       - get_selected_item: 获取选中项
+#
+#   ListBoxControl (listbox):
+#       - select: 选择项
+#       - select_by_index: 按索引选择
+#       - get_items: 获取所有项
+#       - get_selected_items: 获取选中项
+#
+#   TabControl (tab):
+#       - select_tab: 选择标签页
+#       - select_tab_by_index: 按索引选择
+#       - get_tabs: 获取所有标签页
+#       - get_selected_tab: 获取选中标签页
+#
+#   BaseControl (base):
+#       - click: 点击控件
+#       - double_click: 双击控件
+#       - right_click: 右键点击
+#       - set_focus: 设置焦点
+#       - is_visible: 是否可见
+#       - is_enabled: 是否可用
+#       - get_property: 获取属性
+
+# 执行器工厂 (对应 src/action_executors/executor_factory.py):
+#   执行器是对控件自带方法的封装，通过执行器工厂创建
+#   base (BaseExecutor):
+#       - wait_visible: 等待可见
+#       - wait_enabled: 等待可用
+#       - click: 点击 (use_input=False)
+#       - double_click: 双击
+#       - right_click: 右键点击
+#       - get_property: 获取属性
+#       - set_focus: 设置焦点
+#       - is_visible: 是否可见
+#       - is_enabled: 是否可用
+#
+#   button (ButtonExecutor):
+#       - click: 点击按钮
+#       - is_checked: 检查是否选中
+#       - check: 选中
+#       - uncheck: 取消选中
+#
+#   edit (EditExecutor):
+#       - set_text: 设置文本
+#       - get_text: 获取文本
+#       - clear_text: 清除文本
+#       - type_text: 输入文本
+#       - is_editable: 检查是否可编辑
+#
+#   image (ImageExecutor):
+#       - click_input: 图片点击输入
+#       - capture_as_image: 截图
+#       - get_image_size: 获取图片大小
+
+# 断言工厂 (对应 src/assertions/assertion_factory.py):
+
+#   BaseAssertion (基础断言 - 所有控件通用):
+#       - exists: 控件存在
+#       - not_exists: 控件不存在
+#       - visible: 控件可见
+#       - enabled: 控件可用
+#       - disabled: 控件不可用
+#       - property_equal: 属性值匹配
+#       - rect_valid: 控件矩形区域有效
+#
+#   ButtonAssertion (按钮断言 - type=button):
+#       - checked: 按钮已勾选 (复选框/单选框)
+#       - unchecked: 按钮未勾选
+#
+#   EditAssertion (编辑框断言 - type=edit):
+#       - text_equal: 文本精确匹配
+#       - text_contains: 文本包含关键字
+#       - empty: 文本为空
+#       - editable: 控件可编辑
+#
+#   ComboBoxAssertion (下拉框断言 - type=combobox):
+#       - selected_item: 选中项匹配
+#       - item_exists: 项存在
+#       - items_count: 项数量匹配
+#
+#   ListBoxAssertion (列表框断言 - type=listbox):
+#       - item_selected: 项被选中
+#       - selected_count: 选中数量匹配
+#
+#   TabAssertion (标签页断言 - type=tab):
+#       - selected_tab: 选中的标签页
+#       - tab_exists: 标签页存在
+#
+#   ImageAssertion (图片断言 - type=image):
+#       - size_valid: 图片尺寸有效
+
+# Allure报告配置说明:
+
+#   epic: 史诗 - 用于组织大型功能模块
+#   feature: 功能 - 用于组织功能特性
+#   story: 用户故事 - 用于组织具体用户场景
+#   severity: 严重级别
+#       - blocker: 阻塞性缺陷
+#       - critical: 严重缺陷
+#       - normal: 普通缺陷
+#       - minor: 轻微缺陷
+#       - trivial: 琐碎缺陷
+#   tags: 自定义标签列表
+#   suite: 测试套件名称
+#   lead: 负责人
+#   owner: 所有者
+#   layer: 测试层级
+#       - e2e: 端到端测试
+#       - integration: 集成测试
+#       - unit: 单元测试
+#   link_url/link_name: 关联文档链接
+#   issue_url/issue_name: 关联Issue链接
+
+# 参数模板与步骤配置说明:
+#
+# 1. 参数引用:
+#    - 使用 {{test_data.字段名}} 格式引用测试数据
+#    - 例如: {{test_data.username}}, {{test_data.password}}
+#
+# 2. 步骤命名:
+#    - 使用 step-001, step-002 格式
+#    - 例如: "step-001: 点击按钮"
+#
+# 3. 步骤配置结构:
+#    - name: 步骤名称，必须以 step-XXX: 开头
+#    - action: 操作配置
+#        - control: 控件名称 (对应 controls 中定义的控件)
+#        - method: 操作方法 (对应控件的执行器方法)
+#        - params: 操作参数列表 (可使用 {{test_data.字段名}} 引用测试数据)
+#    - assertions: 断言配置 (可选)
+#        - control: 断言的控件名称
+#        - checks: 检查项列表 (对应断言方法)
+#    - timeout: 等待时间 (对应 timeouts 中定义的时间)
+#
+# 4. 完整步骤示例:
+#    - name: "step-001: 点击按钮"
+#      action:
+#        control: "button_example"
+#        method: "click"
+#        params: []
+#      assertions:
+#        - control: "button_example"
+#          checks: ["visible", "enabled"]
+#      timeout: "normal"
+#
+# 5. 带参数步骤示例:
+#    - name: "step-002: 输入用户名"
+#      action:
+#        control: "edit_example"
+#        method: "set_text"
+#        params: ["{{test_data.username}}"]
+#      assertions:
+#        - control: "edit_example"
+#          checks: ["visible", "enabled", "text_equal"]
+#      timeout: "normal"

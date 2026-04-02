@@ -1,0 +1,186 @@
+# 登录注册测试 - 数据驱动模式
+
+project_name: "注册测试"
+
+# 应用配置
+app:
+  process_name: "modulelogin.exe"
+  backend: "uia"
+  app_path: "D:\\Program Files\\CBIM\\modulelogin.exe"
+  start_timeout: 10
+  main_window:
+    title: "modulelogin"
+    state: "visible"
+
+# 控件配置
+controls:
+  register_button:
+    type: "button"
+    locator:
+      title: "在线注册"
+
+  avatar_image:
+    type: "image"
+    locator:
+      best_match: "Image2"
+
+  filename_input:
+    type: "edit"
+    locator:
+      title: "文件名(N):"
+      control_type: "Edit"
+
+  open_button:
+    type: "button"
+    locator:
+      title: "打开(O)"
+
+  confirm_button:
+    type: "button"
+    locator:
+      title: "确认"
+
+  nickname_input:
+    type: "edit"
+    locator:
+      best_match: "Edit3"
+
+  gender_radio:
+    type: "button"
+    locator:
+      title: "女"
+      control_type: "RadioButton"
+
+  password_input:
+    type: "edit"
+    locator:
+      best_match: "Edit4"
+
+  import_button:
+    type: "button"
+    locator:
+      title: "导入签字(图)"
+
+  register_final_button:
+    type: "button"
+    locator:
+      title: "注册"
+
+  yes_button:
+    type: "button"
+    locator:
+      title: "是"
+
+# 测试数据 - 数据驱动
+test_data:
+  normal_registration:
+    avatar_filename: "avatar_海葵_128x128.png"
+    signature_filename: "marker.png"
+    nickname: "test"
+    password: "123456"
+  
+  invalid_nickname_empty:
+    avatar_filename: "avatar_海葵_128x128.png"
+    signature_filename: "marker.png"
+    nickname: "66"
+    password: "123456"
+  
+  invalid_password_short:
+    avatar_filename: "avatar_海葵_128x128.png"
+    signature_filename: "marker.png"
+    
+    nickname: "88"
+    password: "123456"
+
+# 测试用例模板 - 复用此模板，为每个 test_data 生成测试方法
+test_cases:
+  registration_flow:
+    description: "注册流程测试"
+    steps:
+      - name: "step-001: 点击在线注册按钮"
+        action:
+          control: "register_button"
+          method: "click"
+          params: []
+
+      - name: "step-002: 点击头像图片"
+        action:
+          control: "avatar_image"
+          method: "click_input"
+          params: []
+
+      - name: "step-003: 输入头像文件名"
+        action:
+          control: "filename_input"
+          method: "set_text"
+          params: ["{{test_data.avatar_filename}}"]
+        assertions:
+          - control: "filename_input"
+            checks: ["visible", "enabled"]
+        timeout: "normal"
+
+      - name: "step-004: 点击打开按钮"
+        action:
+          control: "open_button"
+          method: "click"
+          params: []
+
+      - name: "step-005: 点击确认按钮"
+        action:
+          control: "confirm_button"
+          method: "click"
+          params: []
+
+      - name: "step-006: 输入昵称"
+        action:
+          control: "nickname_input"
+          method: "set_text"
+          params: ["{{test_data.nickname}}"]
+
+      - name: "step-007: 选择性别"
+        action:
+          control: "gender_radio"
+          method: "click"
+          params: []
+
+      - name: "step-008: 输入密码"
+        action:
+          control: "password_input"
+          method: "set_text"
+          params: ["{{test_data.password}}"]
+
+      - name: "step-009: 点击导入签字"
+        action:
+          control: "import_button"
+          method: "click"
+          params: []
+
+      - name: "step-010: 输入签字文件名"
+        action:
+          control: "filename_input"
+          method: "set_text"
+          params: ["{{test_data.signature_filename}}"]
+
+      - name: "step-011: 点击打开按钮"
+        action:
+          control: "open_button"
+          method: "click"
+          params: []
+
+      - name: "step-012: 点击注册按钮"
+        action:
+          control: "register_final_button"
+          method: "click"
+          params: []
+
+      - name: "step-013: 点击确认按钮"
+        action:
+          control: "yes_button"
+          method: "click"
+          params: []
+
+# 等待时间配置
+timeouts:
+  short: 0.5
+  normal: 1.0
+  long: 2.0
