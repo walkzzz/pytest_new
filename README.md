@@ -154,6 +154,29 @@ test_cases:
 
 项目已配置 GitHub Actions，每次 push 会自动运行测试。
 
+## 核心规范
+
+### 测试用例规范
+- **命名规范**: `test_业务场景_条件_预期结果`（示例：`test_user_login_invalid_password_shows_error`）
+- **结构规范**: 每个测试用例只测试一个业务场景，避免多重断言
+- **断言原则**: 先状态码（如UI状态），后业务字段
+
+### Fixture 作用域规范
+- **session级**: 全局资源（如应用启动、数据库连接）
+- **module级**: 模块共享资源（如用户配置）
+- **function级**: 用例独立资源（如临时测试数据）
+
+### 标记使用规范
+- `@pytest.mark.smoke`: 冒烟测试（核心流程）
+- `@pytest.mark.regression`: 回归测试
+- `@pytest.mark.ui`: UI测试用例
+- `@pytest.mark.unit`: 单元测试用例
+- `@pytest.mark.skip_ci`: 跳过CI执行（用于本地调试）
+
+## 最佳实践示例
+
+参考 `tests/example/test_user_auth_best_practice.py` 了解完整的测试用例最佳实践。
+
 ## 文档
 
 - [快速开始](docs/快速开始.md)

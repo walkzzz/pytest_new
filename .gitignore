@@ -19,14 +19,25 @@ wheels/
 .installed.cfg
 *.egg
 
+# pytest 核心
 .pytest_cache/
 .coverage
+coverage.xml
 htmlcov/
-*.log
-logs/
-
+pytest-report.html
 allure-results/
 allure-report/
+
+# 测试临时文件
+tests/test_data/*.tmp
+tests/test_data/*.log
+tests/test_data/*.json.bak
+
+# 项目特定
+*.log
+logs/
+reports/
+screenshots/
 
 .env
 screenshots/
