@@ -3,10 +3,8 @@ import pytest
 import allure
 from datetime import datetime
 from src.pytest_runner.test_runner import TestRunner
+from src.config.settings import Settings
 from allure_commons.types import AttachmentType
-
-
-SCREENSHOT_DIR = r"D:\TraeWorkspace\tryit\pytest_new\screenshots"
 
 
 class BaseTestCase:
@@ -27,10 +25,10 @@ class BaseTestCase:
             from PIL import ImageGrab
             import time
 
-            os.makedirs(SCREENSHOT_DIR, exist_ok=True)
+            os.makedirs(Settings.SCREENSHOT_DIR, exist_ok=True)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
             filename = f"{name}_{timestamp}.png"
-            filepath = os.path.join(SCREENSHOT_DIR, filename)
+            filepath = os.path.join(Settings.SCREENSHOT_DIR, filename)
 
             if (
                 cls.runner

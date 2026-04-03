@@ -5,8 +5,8 @@ from datetime import datetime
 from pathlib import Path
 from contextlib import contextmanager
 from typing import Optional
-
-SCREENSHOT_DIR = Path(r"D:\TraeWorkspace\tryit\pytest_new")
+from src.config.settings import Settings
+from src.config.logging_config import setup_logging
 
 
 class ScreenRecorder:
@@ -139,10 +139,14 @@ class ScreenRecorder:
             print(f"创建GIF失败: {e}")
 
 
+@pytest.fixture(scope="session", autouse=True)
+def setup_logging_fixture():
+    setup_logging()
+
+
 @pytest.fixture(scope="session")
 def screen_recorder():
-    """屏幕录制器fixture"""
-    return ScreenRecorder(SCREENSHOT_DIR)
+    return ScreenRecorder(Settings.SCREENSHOT_DIR)
 
 
 @pytest.fixture(autouse=True)

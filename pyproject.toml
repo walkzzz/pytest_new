@@ -1,0 +1,35 @@
+[project]
+name = "pytest_new_opt"
+version = "0.1.0"
+description = "UI自动化测试框架"
+requires-python = ">=3.10"
+dependencies = [
+    "pytest>=7.4.3",
+    "pywinauto>=0.6.8",
+    "allure-pytest>=2.13.2",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "pillow>=10.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.2.0",
+    "flake8>=7.0.0",
+    "pytest-cov>=4.1.0",
+    "pytest-xdist>=3.5.0",
+]
+
+[tool.black]
+line-length = 120
+target-version = ["py310"]
+
+[tool.flake8]
+max-line-length = 120
+ignore = ["E203", "W503"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"

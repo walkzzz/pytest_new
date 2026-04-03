@@ -23,10 +23,15 @@ wheels/
 .coverage
 htmlcov/
 *.log
+logs/
 
 allure-results/
 allure-report/
 
-
-tests/
+.env
 screenshots/
+temp/
+*.swp
+*.swo
+*~
+.DS_Store

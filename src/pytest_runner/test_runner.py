@@ -7,8 +7,7 @@ from typing import Any, Dict, Optional
 import allure
 from allure_commons.types import AttachmentType
 
-SCREENSHOT_DIR = r"D:\TraeWorkspace\tryit\pytest_new\screenshots"
-
+from src.config.settings import Settings
 from src.pywinauto.app_manager import ApplicationManager
 from src.pywinauto.controls import ControlFactory
 from src.pywinauto.action_executors import ActionExecutorFactory
@@ -230,9 +229,9 @@ class TestRunner:
                 c for c in action_name[:20] if c.isalnum() or c == "_"
             )
             filename = f"{safe_step}_{safe_action}_{timestamp}.png"
-            filepath = os.path.join(SCREENSHOT_DIR, filename)
+            filepath = os.path.join(Settings.SCREENSHOT_DIR, filename)
 
-            os.makedirs(SCREENSHOT_DIR, exist_ok=True)
+            os.makedirs(Settings.SCREENSHOT_DIR, exist_ok=True)
 
             if (
                 control_name
@@ -297,47 +296,48 @@ class TestRunner:
         params = action_config.get("params", [])
 
         with allure.step(step_name):
-            if test_data:
-                allure.attach(
-                    str(test_data),
-                    "测试数据",
-                    AttachmentType.JSON,
-                )
+            try:
+                if test_data:
+                    allure.attach(
+                        str(test_data),
+                        "测试数据",
+                        AttachmentType.JSON,
+                    )
 
-            if action_config:
-                screenshot_before = self._capture_screenshot(
-                    step_name, method, control_name
-                )
-                if screenshot_before:
-                    with open(screenshot_before, "rb") as f:
-                        allure.attach(
-                            f.read(),
-                            f"截图(点击前)",
-                            AttachmentType.PNG,
-                        )
-                    try:
-                        os.remove(screenshot_before)
-                    except:
-                        pass
+                if action_config:
+                    screenshot_before = self._capture_screenshot(
+                        step_name, method, control_name
+                    )
+                    if screenshot_before:
+                        with open(screenshot_before, "rb") as f:
+                            allure.attach(
+                                f.read(),
+                                f"截图(点击前)",
+                                AttachmentType.PNG,
+                            )
+                        try:
+                            os.remove(screenshot_before)
+                        except:
+                            pass
 
-                self.execute_action(action_config)
+                    self.execute_action(action_config)
 
-                screenshot_after = self._capture_screenshot(
-                    step_name, method, control_name
-                )
-                if screenshot_after:
-                    with open(screenshot_after, "rb") as f:
-                        allure.attach(
-                            f.read(),
-                            f"截图(点击后)",
-                            AttachmentType.PNG,
-                        )
-                    try:
-                        os.remove(screenshot_after)
-                    except:
-                        pass
+                    screenshot_after = self._capture_screenshot(
+                        step_name, method, control_name
+                    )
+                    if screenshot_after:
+                        with open(screenshot_after, "rb") as f:
+                            allure.attach(
+                                f.read(),
+                                f"截图(点击后)",
+                                AttachmentType.PNG,
+                            )
+                        try:
+                            os.remove(screenshot_after)
+                        except:
+                            pass
 
-                action_info = f"""{step_name}
+                    action_info = f"""{step_name}
 
 **step_action**: {json.dumps(action_config, ensure_ascii=False)}
 
@@ -345,24 +345,37 @@ class TestRunner:
 - 方法: `{method}`
 - 参数: `{params}`
 - 超时: `{timeout_key}`"""
-                allure.attach(
-                    action_info,
-                    "动作参数",
-                    AttachmentType.TEXT,
-                )
+                    allure.attach(
+                        action_info,
+                        "动作参数",
+                        AttachmentType.TEXT,
+                    )
 
-            if assertions_config:
-                self.execute_assertions(assertions_config)
-                allure.attach(
-                    str(assertions_config),
-                    "断言",
-                    AttachmentType.TEXT,
-                )
+                if assertions_config:
+                    self.execute_assertions(assertions_config)
+                    allure.attach(
+                        str(assertions_config),
+                        "断言",
+                        AttachmentType.TEXT,
+                    )
 
-            import time
+                import time
 
-            timeout = self.timeouts.get(timeout_key, 0.5)
-            time.sleep(timeout)
+                timeout = self.timeouts.get(timeout_key, 0.5)
+                time.sleep(timeout)
+
+            except Exception as e:
+                error_msg = f"步骤执行失败: {step_name}\n错误: {str(e)}"
+                self.logger.error(error_msg, exc_info=True)
+                screenshot_path = self._capture_screenshot(step_name, "error")
+                if screenshot_path:
+                    with open(screenshot_path, "rb") as f:
+                        allure.attach(
+                            f.read(),
+                            f"错误截图",
+                            AttachmentType.PNG,
+                        )
+                raise
 
     @allure.suite("测试套件")
     @allure.title("测试套件执行")
