@@ -8,6 +8,8 @@
 - **Pywinauto**: Windows UI 自动化测试
 - **Allure 报告**: 美观的测试报告
 - **YAML 配置**: 易于使用的测试用例配置
+- **数据驱动**: 支持参数化和数据工厂模式
+- **并行执行**: 支持 pytest-xdist 并行测试
 
 ## 环境要求
 
@@ -20,37 +22,82 @@
 pip install -r requirements.txt
 ```
 
-## 运行测试
+或使用 poetry：
+
+```bash
+poetry install
+```
+
+## 快速开始
+
+### 1. 配置环境变量
+
+复制 `.env.example` 为 `.env` 并修改配置：
+
+```bash
+copy .env.example .env
+```
+
+### 2. 运行测试
 
 ```powershell
 # 运行所有测试
 python -m pytest tests --alluredir=allure-results
 
-# 或使用 PowerShell 脚本
+# 使用 CLI 工具
+python scripts/cli.py -m login -mk smoke
+
+# 使用 PowerShell 脚本
 .\run_test.ps1
+
+# 使用批处理脚本
+run_test.bat -e test
 ```
 
-## 生成 Allure 报告
+### 3. 生成报告
 
 ```bash
+# Allure 报告
 allure generate allure-results -o allure-report
 allure open allure-report
+
+# HTML 报告 (自动生成)
+# 报告位于 reports/report.html
 ```
+
+## 运行命令
+
+| 命令 | 说明 |
+|------|------|
+| `pytest -m smoke` | 运行冒烟测试 |
+| `pytest -m regression` | 运行回归测试 |
+| `pytest -k "test_login"` | 运行指定用例 |
+| `pytest -n auto` | 并行执行 |
+| `pytest --cov=src` | 生成覆盖率 |
 
 ## 项目结构
 
 ```
 pytest_new/
 ├── src/
-│   ├── allure/           # Allure 辅助工具
-│   ├── config/          # 配置解析
-│   ├── pytest_runner/   # 测试运行器
-│   └── pywinauto/       # UI 自动化
+│   ├── core/              # 核心基类
+│   ├── config/            # 配置管理
+│   ├── utils/             # 工具类
+│   ├── exceptions.py      # 自定义异常
+│   ├── pytest_runner/     # 测试运行器
+│   └── pywinauto/         # UI 自动化
 ├── tests/
-│   ├── configs/         # 测试配置 (YAML)
-│   └── test_*.py       # 测试用例
-├── requirements.txt    # Python 依赖
-└── run_test.ps1        # 运行脚本
+│   ├── configs/           # 测试配置 (YAML)
+│   ├── locators/          # 元素定位器
+│   └── test_*.py          # 测试用例
+├── fixtures/              # 可复用 fixture
+├── data/                  # 测试数据
+├── scripts/               # 辅助脚本
+├── docs/                  # 文档
+├── .github/workflows/     # CI/CD 配置
+├── pytest.ini             # pytest 配置
+├── pyproject.toml         # 项目配置
+└── requirements.txt       # 依赖
 ```
 
 ## 配置说明
@@ -61,8 +108,6 @@ pytest_new/
 
 ```yaml
 # 自动化测试配置模板
-# 版本: 1.0
-# 框架: src目录下的控件和执行器
 
 # 应用配置
 app:
@@ -79,12 +124,6 @@ controls:
     locator:
       title: "按钮文本"
 
-  edit_example:
-    type: "edit"
-    locator:
-      title: "输入框标题"
-      best_match: "Edit1"
-
 # 测试数据
 test_data:
   test_case_1:
@@ -95,76 +134,27 @@ test_data:
 test_cases:
   test_case_1:
     description: "测试用例1描述"
-    test_data: "test_case_1"
-
-    # Allure报告配置
-    epic: "模块名称"
-    feature: "功能名称"
-    story: "用户故事"
-    severity: "normal"
-    tags: ["标签1", "标签2"]
-    suite: "测试套件"
-
     steps:
       - name: "step-001: 点击按钮"
         action:
           control: "button_example"
           method: "click"
-          params: []
-        assertions:
-          - control: "button_example"
-            checks: ["visible", "enabled"]
         timeout: "normal"
-
-      - name: "step-002: 输入文本"
-        action:
-          control: "edit_example"
-          method: "set_text"
-          params: ["{{test_data.username}}"]
-        assertions:
-          - control: "edit_example"
-            checks: ["visible", "enabled", "text_equal"]
-        timeout: "normal"
-
-# 等待时间配置
-timeouts:
-  short: 0.2
-  normal: 0.5
-  long: 1.0
 ```
 
-### 控件类型 (controls)
+## 常用标记
 
-| 类型 | 说明 |
+| 标记 | 说明 |
 |------|------|
-| button | 按钮控件 |
-| edit | 文本输入框 |
-| image | 图片控件 |
-| combobox | 下拉框 |
-| listbox | 列表框 |
-| tab | 标签页 |
-| tree | 树形控件 |
-| progressbar | 进度条 |
-| slider | 滑块 |
-| calendar | 日历 |
-| statusbar | 状态栏 |
-| menu | 菜单 |
-| toolbar | 工具栏 |
-| hyperlink | 超链接 |
-| groupbox | 分组框 |
-| scrollbar | 滚动条 |
-| richedit | 富文本 |
-| label | 标签 |
-| dialog | 对话框 |
+| `@pytest.mark.smoke` | 冒烟测试 |
+| `@pytest.mark.regression` | 回归测试 |
+| `@pytest.mark.slow` | 慢速测试 |
 
-### Allure 报告配置
+## CI/CD
 
-| 字段 | 说明 | 可选值 |
-|------|------|--------|
-| epic | 史诗 | - |
-| feature | 功能 | - |
-| story | 用户故事 | - |
-| severity | 严重级别 | blocker, critical, normal, minor, trivial |
-| tags | 自定义标签 | - |
-| suite | 套件名称 | - |
-| layer | 层级 | e2e, integration, unit |
+项目已配置 GitHub Actions，每次 push 会自动运行测试。
+
+## 文档
+
+- [快速开始](docs/快速开始.md)
+- [项目架构](docs/项目架构.md)
