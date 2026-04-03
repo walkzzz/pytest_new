@@ -1,18 +1,18 @@
-name: Pytest Auto Test
+name: CI
 
 on:
   push:
-    branches: [main, master, dev, develop]  # 推送到主分支/开发分支触发
+    branches: [main, master, dev, develop]
   pull_request:
-    branches: [main, master]       # PR到主分支触发
+    branches: [main, master]
 
 jobs:
   test:
     runs-on: windows-latest
     strategy:
-      fail-fast: false  # 一个Python版本失败不影响其他版本
+      fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]  # 多版本兼容测试
+        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
       - name: 拉取代码
@@ -22,25 +22,32 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"  # 缓存依赖，加速
+          cache: "pip"
 
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest-cov  # 安装覆盖率工具
+          pip install -r requirements-dev.txt
 
-      - name: 运行pytest（跳过标记为skip_ci的用例）
+      - name: 代码规范检查 (flake8/black/isort)
         run: |
-          pytest --cov=src --cov-report=xml --cov-report=html -m "not skip_ci" -v --tb=short
+          flake8 .
+          black --check .
+          isort --check .
+          mypy .
+
+      - name: 运行测试 (并行+覆盖率)
+        run: |
+          pytest -n auto --cov=src --cov-report=term-missing --cov-report=xml --cov-report=html -m "not skip_ci" -v --tb=short --exitfirst
 
       - name: 上传覆盖率报告到Codecov
         uses: codecov/codecov-action@v3
         with:
           file: ./coverage.xml
-          fail_ci_if_error: true  # 覆盖率不达标则CI失败
+          fail_ci_if_error: true
 
-      - name: 上传HTML报告（供调试）
+      - name: 上传HTML报告 (供调试)
         uses: actions/upload-artifact@v4
         with:
           name: pytest-html-report-${{ matrix.python-version }}

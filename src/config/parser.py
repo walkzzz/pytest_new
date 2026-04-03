@@ -1,14 +1,15 @@
 import os
-import yaml
 from typing import Any, Dict, List, Optional, Tuple
 
+import yaml  # noqa: F401
+
 from src.config.constants import (
-    TEMPLATE_PATH,
+    SUPPORTED_ASSERTION_METHODS,
     SUPPORTED_CONTROL_TYPES,
     SUPPORTED_EXECUTOR_METHODS,
-    SUPPORTED_ASSERTION_METHODS,
+    TEMPLATE_PATH,
 )
-from src.config.yaml_loader import YAMLLoader, TemplateEngine
+from src.config.yaml_loader import TemplateEngine, YAMLLoader
 
 
 class Config:
@@ -59,9 +60,7 @@ class Config:
         return test_cases[test_case_name]
 
     @staticmethod
-    def get_test_case_data(
-        config: Dict[str, Any], test_case: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def get_test_case_data(config: Dict[str, Any], test_case: Dict[str, Any]) -> Dict[str, Any]:
         test_data_name = test_case.get("test_data")
         if not test_data_name:
             return {}
@@ -99,9 +98,7 @@ class Config:
                 matches = re.findall(pattern, value)
                 for match in matches:
                     if match in test_data:
-                        value = value.replace(
-                            f"{{{{test_data.{match}}}}}", str(test_data[match])
-                        )
+                        value = value.replace(f"{{{{test_data.{match}}}}}", str(test_data[match]))
                 return value
             elif isinstance(value, dict):
                 return {k: replace_template(v) for k, v in value.items()}
@@ -169,9 +166,7 @@ class Config:
         return errors
 
     @staticmethod
-    def get_control_locator(
-        controls_config: Dict[str, Any], control_name: str
-    ) -> Tuple[str, Dict[str, Any]]:
+    def get_control_locator(controls_config: Dict[str, Any], control_name: str) -> Tuple[str, Dict[str, Any]]:
         if control_name not in controls_config:
             raise KeyError(f"控件不存在: {control_name}")
         control_config = controls_config[control_name]

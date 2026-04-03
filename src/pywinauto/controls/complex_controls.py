@@ -1,7 +1,9 @@
 import logging
 import time
-from typing import Optional, List
+from typing import List, Optional
+
 from pywinauto.application import WindowSpecification
+
 from .base_control import BaseControl
 from .basic_controls import ButtonControl
 
@@ -29,9 +31,7 @@ class MenuControl(BaseControl):
             self.element.click_input()
             for item in path:
                 time.sleep(0.2)
-                menu_item = self.window.child_window(
-                    title=item, control_type="MenuItem"
-                )
+                menu_item = self.window.child_window(title=item, control_type="MenuItem")
                 menu_item.click_input()
 
             logger.info(f"点击菜单项: {' -> '.join(path)}")

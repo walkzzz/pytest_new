@@ -1,10 +1,12 @@
 import os
-import pytest
-import allure
 from datetime import datetime
-from src.pytest_runner.test_runner import TestRunner
-from src.config.settings import Settings
+
+import pytest  # noqa: F401
 from allure_commons.types import AttachmentType
+
+import allure
+from src.config.settings import Settings
+from src.pytest_runner.test_runner import TestRunner
 
 
 class BaseTestCase:
@@ -22,19 +24,16 @@ class BaseTestCase:
     def _capture_screenshot(cls, name: str):
         """截取应用截图"""
         try:
-            from PIL import ImageGrab
             import time
+
+            from PIL import ImageGrab
 
             os.makedirs(Settings.SCREENSHOT_DIR, exist_ok=True)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
             filename = f"{name}_{timestamp}.png"
             filepath = os.path.join(Settings.SCREENSHOT_DIR, filename)
 
-            if (
-                cls.runner
-                and hasattr(cls.runner, "control_factory")
-                and cls.runner.control_factory
-            ):
+            if cls.runner and hasattr(cls.runner, "control_factory") and cls.runner.control_factory:
                 window = cls.runner.control_factory.window
 
                 window.set_focus()
@@ -50,7 +49,7 @@ class BaseTestCase:
                         allure.attach(f.read(), name, AttachmentType.PNG)
                     try:
                         os.remove(filepath)
-                    except:
+                    except Exception:
                         pass
         except Exception as e:
             print(f"截图失败: {e}")
@@ -61,9 +60,7 @@ class BaseTestCase:
         if cls.config_filename is None:
             raise ValueError("必须设置 config_filename 属性")
 
-        tests_dir = os.path.dirname(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        )
+        tests_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         cls.config_path = os.path.join(tests_dir, "tests", cls.config_filename)
         cls.runner = TestRunner(
             config_path=cls.config_path,
@@ -78,9 +75,7 @@ class BaseTestCase:
             cls._capture_screenshot("应用启动")
 
             if not connected:
-                raise RuntimeError(
-                    f"无法连接到应用: {cls.runner.app_config.get('process_name', 'unknown')}"
-                )
+                raise RuntimeError(f"无法连接到应用: {cls.runner.app_config.get('process_name', 'unknown')}")
         cls._app_started = True
 
     @classmethod
@@ -91,9 +86,7 @@ class BaseTestCase:
                 cls._capture_screenshot("应用关闭")
                 cls.runner.disconnect_app(close_app=True)
 
-    def run_test_case(
-        self, test_case_name: str, data_key: str = None, restart_app: bool = False
-    ):
+    def run_test_case(self, test_case_name: str, data_key: str = None, restart_app: bool = False):
         """运行指定测试用例
 
         Args:

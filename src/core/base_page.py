@@ -1,5 +1,6 @@
-from typing import Any, Dict, Optional
 from pathlib import Path
+from typing import Any, Dict, Optional
+
 import yaml
 
 

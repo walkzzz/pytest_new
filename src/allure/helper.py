@@ -1,7 +1,8 @@
 from typing import List
 
-import allure
 from allure_commons.types import AttachmentType
+
+import allure
 
 
 class AllureHelper:
@@ -15,9 +16,9 @@ class AllureHelper:
     @staticmethod
     def add_link(url: str, name: str = None, link_type: str = None):
         """添加链接"""
-        if link_type == 'issue':
+        if link_type == "issue":
             allure.issue(url=url, name=name)
-        elif link_type == 'tms':
+        elif link_type == "tms":
             allure.tms(url=url, name=name)
         else:
             allure.link(url=url, name=name)
@@ -31,11 +32,11 @@ class AllureHelper:
     def add_severity(severity: str):
         """添加严重级别"""
         severity_map = {
-            'blocker': allure.severity_level.BLOCKER,
-            'critical': allure.severity_level.CRITICAL,
-            'normal': allure.severity_level.NORMAL,
-            'minor': allure.severity_level.MINOR,
-            'trivial': allure.severity_level.TRIVIAL,
+            "blocker": allure.severity_level.BLOCKER,
+            "critical": allure.severity_level.CRITICAL,
+            "normal": allure.severity_level.NORMAL,
+            "minor": allure.severity_level.MINOR,
+            "trivial": allure.severity_level.TRIVIAL,
         }
         level = severity_map.get(severity.lower(), allure.severity_level.NORMAL)
         allure.severity(level)

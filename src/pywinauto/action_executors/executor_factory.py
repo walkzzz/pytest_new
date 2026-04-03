@@ -1,10 +1,11 @@
 from src.pywinauto.controls import (
-    ControlFactory,
     BaseControl,
     ButtonControl,
+    ControlFactory,
     EditControl,
     ImageControl,
 )
+
 from .base_executor import BaseExecutor
 from .basic_executors import ButtonExecutor, EditExecutor, ImageExecutor
 

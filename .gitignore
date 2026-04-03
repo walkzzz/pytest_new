@@ -1,8 +1,13 @@
+# Python cache
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+env/
+venv/
+.venv/
+env/
 build/
 develop-eggs/
 dist/
@@ -19,7 +24,7 @@ wheels/
 .installed.cfg
 *.egg
 
-# pytest 核心
+# pytest
 .pytest_cache/
 .coverage
 coverage.xml
@@ -39,10 +44,26 @@ logs/
 reports/
 screenshots/
 
-.env
-screenshots/
-temp/
+# IDE
+.idea/
+.vscode/
 *.swp
 *.swo
 *~
+
+# OS
 .DS_Store
+Thumbs.db
+
+# 环境配置文件
+.env
+.env.local
+
+# 临时目录
+temp/
+tmp/
+
+# 视频录制文件
+*.avi
+*.mp4
+*.gif

@@ -1,8 +1,9 @@
-import pytest
 import os
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 
 class TestSettings:
@@ -35,6 +36,7 @@ class TestSettings:
     @patch.dict(os.environ, {"APP_PATH": "D:\\Test\\app.exe"})
     def test_app_path_from_env(self):
         import importlib
+
         import src.config.settings
 
         importlib.reload(src.config.settings)
@@ -55,16 +57,12 @@ class TestSettings:
                     Path(tmpdir) / "screenshots",
                 ):
                     with patch.object(
-                        __import__(
-                            "src.config.settings", fromlist=["Settings"]
-                        ).Settings,
+                        __import__("src.config.settings", fromlist=["Settings"]).Settings,
                         "ALLURE_REPORT_DIR",
                         Path(tmpdir) / "allure-results",
                     ):
                         with patch.object(
-                            __import__(
-                                "src.config.settings", fromlist=["Settings"]
-                            ).Settings,
+                            __import__("src.config.settings", fromlist=["Settings"]).Settings,
                             "LOG_DIR",
                             Path(tmpdir) / "logs",
                         ):
@@ -77,9 +75,7 @@ class TestSettings:
                                 LOG_DIR = Path(tmpdir) / "logs"
 
                             TestSettings.SCREENSHOT_DIR = Path(tmpdir) / "screenshots"
-                            TestSettings.ALLURE_REPORT_DIR = (
-                                Path(tmpdir) / "allure-results"
-                            )
+                            TestSettings.ALLURE_REPORT_DIR = Path(tmpdir) / "allure-results"
                             TestSettings.LOG_DIR = Path(tmpdir) / "logs"
                             TestSettings.ensure_dirs()
                             assert (Path(tmpdir) / "screenshots").exists()

@@ -3,9 +3,10 @@
 遵循「test_业务场景_条件_预期结果」命名规范
 """
 
-import pytest
 import json
 import os
+
+import pytest
 
 
 @pytest.mark.ui
@@ -19,15 +20,11 @@ import os
     ],
     ids=["有效用户名密码", "空用户名", "密码过短"],
 )
-def test_user_login_credentials_validation(
-    test_data_dir, username, password, expected_result
-):
+def test_user_login_credentials_validation(test_data_dir, username, password, expected_result):
     """测试用户登录-凭据验证（最佳实践示例）"""
     # 步骤1：读取测试数据文件（避免硬编码）
-    with open(
-        os.path.join(test_data_dir, "login_data.json"), "r", encoding="utf-8"
-    ) as f:
-        test_data = json.load(f)
+    with open(os.path.join(test_data_dir, "login_data.json"), "r", encoding="utf-8") as f:
+        test_data = json.load(f)  # noqa: F841
 
     # 步骤2：构造请求数据（实际项目中可能是UI操作）
     login_data = {"username": username, "password": password}
@@ -47,9 +44,7 @@ def test_user_login_credentials_validation(
         actual_result = "登录失败"
 
     # 步骤5：精准断言（优先核心业务字段）
-    assert actual_result == expected_result, (
-        f"登录验证失败: 预期'{expected_result}'，实际'{actual_result}'"
-    )
+    assert actual_result == expected_result, f"登录验证失败: 预期'{expected_result}'，实际'{actual_result}'"
 
     # 附加断言（如有必要）
     # 这里可以根据实际业务需求添加更多断言

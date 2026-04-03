@@ -1,7 +1,8 @@
-import time
 import logging
+import time
 from functools import wraps
 from typing import Any, Callable, Optional
+
 from src.exceptions import ElementNotFoundError
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,9 @@ def wait_until_exists(elem: Any, timeout: int = 10, retry_interval: float = 0.5)
     raise ElementNotFoundError(f"元素超时 {timeout} 秒仍未存在")
 
 
-def with_retry(func: Optional[Callable] = None, retry_times: int = 2, delay: float = 0.5, exceptions: tuple = (Exception,)):
+def with_retry(
+    func: Optional[Callable] = None, retry_times: int = 2, delay: float = 0.5, exceptions: tuple = (Exception,)
+):
     def decorator(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
@@ -59,8 +62,9 @@ def with_retry(func: Optional[Callable] = None, retry_times: int = 2, delay: flo
                     else:
                         logger.error(f"{fn.__name__} 最终失败: {e}")
             raise last_exception
+
         return wrapper
-    
+
     if func is None:
         return decorator
     return decorator(func)

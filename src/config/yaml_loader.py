@@ -1,7 +1,8 @@
 import os
-import yaml
 from string import Template
 from typing import Any, Dict, Optional
+
+import yaml
 
 
 class YAMLLoader:

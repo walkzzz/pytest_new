@@ -1,13 +1,15 @@
 import logging
 from typing import Optional
+
 from src.pywinauto.controls import (
     ButtonControl,
-    EditControl,
     ComboBoxControl,
+    EditControl,
+    ImageControl,
     ListBoxControl,
     TabControl,
-    ImageControl,
 )
+
 from .base_executor import BaseExecutor
 
 logger = logging.getLogger(__name__)
@@ -60,9 +62,7 @@ class EditExecutor(BaseExecutor):
         logger.info(f"输入框执行器: 清空文本 {self.control.locator}")
         return self.control.clear_text()
 
-    def type_text(
-        self, text: str, with_spaces: bool = True, pause: float = 0.0
-    ) -> bool:
+    def type_text(self, text: str, with_spaces: bool = True, pause: float = 0.0) -> bool:
         """模拟键盘逐字符输入"""
         logger.info(f"输入框执行器: 键盘输入文本 '{text}'")
         return self.control.type_text(text, with_spaces, pause)

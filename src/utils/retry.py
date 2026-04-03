@@ -1,5 +1,5 @@
-import time
 import logging
+import time
 from functools import wraps
 
 logger = logging.getLogger(__name__)
@@ -16,9 +16,7 @@ def retry(max_attempts: int = 3, delay: float = 1.0, exceptions: tuple = (Except
                 except exceptions as e:
                     last_exception = e
                     if attempt < max_attempts - 1:
-                        logger.warning(
-                            f"{func.__name__} 失败 (尝试 {attempt + 1}/{max_attempts}): {e}"
-                        )
+                        logger.warning(f"{func.__name__} 失败 (尝试 {attempt + 1}/{max_attempts}): {e}")
                         time.sleep(delay)
                     else:
                         logger.error(f"{func.__name__} 最终失败: {e}")

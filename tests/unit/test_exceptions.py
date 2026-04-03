@@ -8,7 +8,7 @@ class TestExceptions:
         assert issubclass(AutoTestBaseError, Exception)
 
     def test_app_start_error_inherits_from_base(self):
-        from src.exceptions import AutoTestBaseError, AppStartError
+        from src.exceptions import AppStartError, AutoTestBaseError
 
         assert issubclass(AppStartError, AutoTestBaseError)
 

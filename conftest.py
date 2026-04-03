@@ -1,12 +1,23 @@
 import os
 import time
-import pytest
 from datetime import datetime
 from pathlib import Path
-from contextlib import contextmanager
-from typing import Optional, Dict
-from src.config.settings import Settings
+
+import pytest
+
+# 导入自定义夹具
+from pytest_new_opt.fixtures import backend_type  # noqa: F401
+from pytest_new_opt.fixtures import clean_logs_dir  # noqa: F401
+from pytest_new_opt.fixtures import env_vars  # noqa: F401
+from pytest_new_opt.fixtures import project_root  # noqa: F401
+from pytest_new_opt.fixtures import screenshot_context  # noqa: F401
+from pytest_new_opt.fixtures import temp_dir  # noqa: F401
+from pytest_new_opt.fixtures import temp_test_data  # noqa: F401
+from pytest_new_opt.fixtures import test_data_dir  # noqa: F401
+from pytest_new_opt.fixtures import timeout_value  # noqa: F401
+from pytest_new_opt.fixtures import ui_app_config  # noqa: F401
 from src.config.logging_config import setup_logging
+from src.config.settings import Settings
 
 
 class ScreenRecorder:
@@ -64,7 +75,7 @@ class ScreenRecorder:
             print(f"截图失败: {e}")
 
     def _capture_screen(self, filepath: str):
-        """使用mss截屏"""
+        """使用mss截屏（如果可用）"""
         try:
             import mss
 
@@ -84,7 +95,7 @@ class ScreenRecorder:
             print(f"PIL截屏失败: {e}")
 
     def _create_video(self, output_path: str):
-        """将帧合成为视频"""
+        """将帧合成为视频（如果cv2可用）"""
         if not self.frames:
             return
 
@@ -147,64 +158,6 @@ def setup_logging_fixture():
 @pytest.fixture(scope="session")
 def screen_recorder():
     return ScreenRecorder(Settings.SCREENSHOT_DIR)
-
-
-# -------------------------- 会话级Fixture（全局复用，仅初始化1次） --------------------------
-@pytest.fixture(scope="session")
-def test_data_dir():
-    """测试数据目录路径，统一管理测试数据"""
-    dir_path = os.path.join(os.path.dirname(__file__), "tests", "test_data")
-    os.makedirs(dir_path, exist_ok=True)
-    return dir_path
-
-
-# -------------------------- 模块级Fixture（每个.py文件复用） --------------------------
-@pytest.fixture(scope="module")
-def ui_app_config() -> Dict:
-    """模块级UI应用配置，避免重复配置"""
-    return {
-        "process_name": "modulelogin.exe",
-        "backend": "uia",
-        "app_path": "D:\\Program Files\\CBIM\\modulelogin.exe",
-        "start_timeout": 10,
-    }
-
-
-# -------------------------- 用例级Fixture（每个用例独立） --------------------------
-@pytest.fixture(scope="function")
-def temp_test_data(test_data_dir):
-    """用例级临时测试数据（创建→用例执行→清理）"""
-    import tempfile
-    import json
-
-    temp_file = tempfile.NamedTemporaryFile(
-        suffix=".json", dir=test_data_dir, delete=False
-    )
-    temp_file.close()
-
-    test_data = {
-        "test_id": datetime.now().strftime("%Y%m%d_%H%M%S_%f"),
-        "test_name": "ui_automation_test",
-    }
-
-    with open(temp_file.name, "w", encoding="utf-8") as f:
-        json.dump(test_data, f, ensure_ascii=False, indent=2)
-
-    yield temp_file.name
-
-    # 后置：清理临时文件
-    try:
-        if os.path.exists(temp_file.name):
-            os.unlink(temp_file.name)
-    except Exception as e:
-        print(f"清理临时文件失败: {e}")
-
-
-# -------------------------- 参数化Fixture（动态传参） --------------------------
-@pytest.fixture(params=["uia", "win32"], ids=["UI自动化-uia", "UI自动化-win32"])
-def backend_type(request):
-    """参数化后端类型，测试不同后端兼容性"""
-    return request.param
 
 
 @pytest.fixture(autouse=True)

@@ -1,5 +1,6 @@
+from typing import Any, Callable, Dict
+
 import pytest
-from typing import Any, Dict, Callable
 
 
 @pytest.fixture(scope="session")
@@ -14,9 +15,7 @@ def app_config():
 
 @pytest.fixture
 def data_factory() -> Callable[[str, Dict[str, Any]], Dict[str, Any]]:
-    def _create_test_data(
-        data_type: str, overrides: Dict[str, Any] = None
-    ) -> Dict[str, Any]:
+    def _create_test_data(data_type: str, overrides: Dict[str, Any] = None) -> Dict[str, Any]:
         base_data = {
             "normal": {
                 "avatar_filename": "avatar_海葵_128x128.png",

@@ -1,20 +1,21 @@
 from src.pywinauto.controls import (
     BaseControl,
     ButtonControl,
-    EditControl,
     ComboBoxControl,
+    EditControl,
+    ImageControl,
     ListBoxControl,
     TabControl,
-    ImageControl,
 )
+
 from .base_assertion import BaseAssertion
 from .basic_assertions import (
     ButtonAssertion,
-    EditAssertion,
     ComboBoxAssertion,
+    EditAssertion,
+    ImageAssertion,
     ListBoxAssertion,
     TabAssertion,
-    ImageAssertion,
 )
 
 

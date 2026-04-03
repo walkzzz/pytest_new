@@ -1,0 +1,27 @@
+# 代码规范工具
+black>=24.2.0
+flake8>=7.0.0
+isort>=5.12.0
+mypy>=1.5.0
+ruff>=0.1.0
+
+# 测试增强工具
+pytest-sugar>=0.9.7
+pytest-cov>=7.0.0
+pytest-xdist>=3.5.0
+pytest-testmon>=2.2.0
+pytest-asyncio>=1.3.0
+pytest-html>=4.2.0
+allure-pytest>=2.13.5
+
+# 其他开发工具
+pre-commit>=3.5.0
+twine>=4.0.0
+build>=1.0.0
+
+# 项目核心依赖（用于开发）
+pytest>=9.0.2
+pywinauto>=0.6.8
+PyYAML>=6.0.2
+python-dotenv>=1.0.1
+pillow>=11.1.0

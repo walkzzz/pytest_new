@@ -1,18 +1,18 @@
+import json
 import logging
 import os
-import json
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-import allure
 from allure_commons.types import AttachmentType
 
-from src.config.settings import Settings
-from src.pywinauto.app_manager import ApplicationManager
-from src.pywinauto.controls import ControlFactory
-from src.pywinauto.action_executors import ActionExecutorFactory
-from src.pywinauto.assertions import AssertionFactory, ControlAssertionError
+import allure
 from src.config import Config
+from src.config.settings import Settings
+from src.pywinauto.action_executors import ActionExecutorFactory
+from src.pywinauto.app_manager import ApplicationManager
+from src.pywinauto.assertions import AssertionFactory, ControlAssertionError
+from src.pywinauto.controls import ControlFactory
 
 
 class TestRunner:
@@ -39,9 +39,7 @@ class TestRunner:
             raise ValueError(f"配置验证失败: {errors}")
 
         self.app_config = app_config or Config.get_app_config(self.config)
-        self.controls_config = controls_config or Config.get_controls_config(
-            self.config
-        )
+        self.controls_config = controls_config or Config.get_controls_config(self.config)
         self.timeouts = timeouts or Config.get_timeouts(self.config)
 
         self.base_url = base_url
@@ -119,9 +117,7 @@ class TestRunner:
 
     def get_control(self, control_name: str):
         """根据配置获取控件"""
-        control_type, locator = Config.get_control_locator(
-            self.controls_config, control_name
-        )
+        control_type, locator = Config.get_control_locator(self.controls_config, control_name)
         return self._create_control(control_type, locator)
 
     def _create_control(self, control_type: str, locator: dict):
@@ -153,9 +149,7 @@ class TestRunner:
 
     def get_action(self, control_name: str):
         """根据配置获取执行器"""
-        control_type, locator = Config.get_control_locator(
-            self.controls_config, control_name
-        )
+        control_type, locator = Config.get_control_locator(self.controls_config, control_name)
         return self._create_action(control_type, locator)
 
     def _create_action(self, control_type: str, locator: dict):
@@ -204,9 +198,7 @@ class TestRunner:
                         self.logger.error(f"断言失败: {check} - {e}")
                         raise
 
-    def _capture_screenshot(
-        self, step_name: str, action_name: str, control_name: str = None
-    ) -> str:
+    def _capture_screenshot(self, step_name: str, action_name: str, control_name: str = None) -> str:
         """截图并保存
 
         Args:
@@ -225,19 +217,13 @@ class TestRunner:
 
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
             safe_step = "".join(c for c in step_name[:20] if c.isalnum() or c == "_")
-            safe_action = "".join(
-                c for c in action_name[:20] if c.isalnum() or c == "_"
-            )
+            safe_action = "".join(c for c in action_name[:20] if c.isalnum() or c == "_")
             filename = f"{safe_step}_{safe_action}_{timestamp}.png"
             filepath = os.path.join(Settings.SCREENSHOT_DIR, filename)
 
             os.makedirs(Settings.SCREENSHOT_DIR, exist_ok=True)
 
-            if (
-                control_name
-                and hasattr(self, "control_factory")
-                and self.control_factory
-            ):
+            if control_name and hasattr(self, "control_factory") and self.control_factory:
                 try:
                     control = self.get_control(control_name)
                     if control and hasattr(control, "element"):
@@ -305,31 +291,27 @@ class TestRunner:
                     )
 
                 if action_config:
-                    screenshot_before = self._capture_screenshot(
-                        step_name, method, control_name
-                    )
+                    screenshot_before = self._capture_screenshot(step_name, method, control_name)
                     if screenshot_before:
                         with open(screenshot_before, "rb") as f:
                             allure.attach(
                                 f.read(),
-                                f"截图(点击前)",
+                                "截图(点击前)",
                                 AttachmentType.PNG,
                             )
                         try:
                             os.remove(screenshot_before)
-                        except:
+                        except Exception:
                             pass
 
                     self.execute_action(action_config)
 
-                    screenshot_after = self._capture_screenshot(
-                        step_name, method, control_name
-                    )
+                    screenshot_after = self._capture_screenshot(step_name, method, control_name)
                     if screenshot_after:
                         with open(screenshot_after, "rb") as f:
                             allure.attach(
                                 f.read(),
-                                f"截图(点击后)",
+                                "截图(点击后)",
                                 AttachmentType.PNG,
                             )
                         try:
@@ -493,9 +475,7 @@ class TestRunner:
                 allure.attach(f"步骤 {i + 1} 断言失败", "错误信息", AttachmentType.TEXT)
                 raise
             except Exception as e:
-                allure.attach(
-                    f"步骤 {i + 1} 执行失败: {str(e)}", "错误信息", AttachmentType.TEXT
-                )
+                allure.attach(f"步骤 {i + 1} 执行失败: {str(e)}", "错误信息", AttachmentType.TEXT)
                 raise
 
         self.logger.info(f"测试用例 '{test_case_name}' 执行完成")
