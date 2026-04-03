@@ -1020,7 +1020,7 @@ pytest --memray  # 需要 pytest-memray 插件
 
 ### 文档资源
 - **项目 README**: 查看项目概览和快速开始
-- **API 文档**: 查看 `docs/API.md` 了解详细接口
+- **API 文档**: 查看 `docs/api-reference.md` 了解详细接口
 - **示例代码**: 参考 `tests/example/` 中的完整示例
 - **优化指南**: 查看 `docs/` 目录下的优化文档
 

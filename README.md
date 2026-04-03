@@ -179,13 +179,13 @@ test_cases:
 
 ## 文档
 
-- [快速开始](docs/快速开始.md)
-- [项目架构](docs/项目架构.md)
-- [使用指南](docs/使用指南.md) - 详细使用说明
-- [API 参考](docs/API.md) - 核心模块接口文档
-- [并行测试优化](docs/并行测试优化.md)
-- [断言与调试优化](docs/断言与调试优化.md)
-- [优化实施总结](优化实施总结.md)
+- [快速开始](docs/quick-start.md)
+- [项目架构](docs/architecture.md)
+- [使用指南](docs/user-guide.md) - 详细使用说明
+- [API 参考](docs/api-reference.md) - 核心模块接口文档
+- [并行测试优化](docs/parallel-testing-optimization.md)
+- [断言与调试优化](docs/assertion-debugging-optimization.md)
+- [优化实施总结](reports/optimization-implementation-summary.md)
 - [更新日志](CHANGELOG.md)
 
 ## 优化功能
@@ -240,4 +240,4 @@ pytest --showlocals --tb=short
 | Fixture缓存 | 20%-50% |
 | 插件懒加载 | 20%-40% |
 
-查看 [优化实施总结](优化实施总结.md) 获取完整实施细节。
+查看 [优化实施总结](reports/optimization-implementation-summary.md) 获取完整实施细节。

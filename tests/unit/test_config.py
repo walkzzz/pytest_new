@@ -1,8 +1,5 @@
 import os
-from pathlib import Path
-from unittest.mock import MagicMock, mock_open, patch
-
-import pytest
+from unittest.mock import mock_open, patch
 
 from src.utils.config import load_config, load_test_data, load_yaml, resolve_env_var
 

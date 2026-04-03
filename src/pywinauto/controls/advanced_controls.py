@@ -1,6 +1,5 @@
 import logging
-import time
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 from pywinauto.application import WindowSpecification
 
@@ -63,7 +62,11 @@ class TreeControl(BaseControl):
             if not self._find_element():
                 return []
 
-            children = self.element.get_children(parent_item) if parent_item else self.element.get_children()
+            children = (
+                self.element.get_children(parent_item)
+                if parent_item
+                else self.element.get_children()
+            )
             logger.debug(f"树形节点子项: {children}")
             return children
         except Exception as e:

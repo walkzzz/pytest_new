@@ -1,12 +1,10 @@
 import logging
 import time
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Optional, Tuple
 
 from pywinauto.application import WindowSpecification
 from pywinauto.findwindows import ElementNotFoundError
 from pywinauto.timings import TimeoutError
-
-from pywinauto import keyboard, mouse
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +66,9 @@ class BaseControl:
         except (TimeoutError, ElementNotFoundError):
             return False
 
-    def wait(self, state: str = "exists", timeout: int = 10, retry_interval: float = 0.5) -> bool:
+    def wait(
+        self, state: str = "exists", timeout: int = 10, retry_interval: float = 0.5
+    ) -> bool:
         """
         等待控件达到指定状态
 

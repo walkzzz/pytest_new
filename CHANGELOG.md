@@ -19,11 +19,11 @@ All notable changes to the `pytest_new_opt` UI automation testing framework.
   - mypy type checking
 - **Developer workflow**: Makefile with lint, test, typecheck, coverage commands
 - **Complete documentation**:
-  - `优化实施总结.md`: Complete optimization roadmap and implementation summary
-  - `docs/API.md`: Comprehensive API reference
-  - `docs/使用指南.md`: User guide
-  - `docs/并行测试优化.md`: Parallel testing optimization guide
-  - `docs/断言与调试优化.md`: Assertion and debugging optimization guide
+  - `reports/optimization-implementation-summary.md`: Complete optimization roadmap and implementation summary
+  - `docs/api-reference.md`: Comprehensive API reference
+  - `docs/user-guide.md`: User guide
+  - `docs/parallel-testing-optimization.md`: Parallel testing optimization guide
+  - `docs/assertion-debugging-optimization.md`: Assertion and debugging optimization guide
 - **CI/CD enhancements**: Updated GitHub Actions workflow with modern pytest options
 
 ### Optimized
