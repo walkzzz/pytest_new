@@ -1,4 +1,4 @@
-# Python cache
+# ============= Python =============
 __pycache__/
 *.py[cod]
 *$py.class
@@ -7,7 +7,6 @@ __pycache__/
 env/
 venv/
 .venv/
-env/
 build/
 develop-eggs/
 dist/
@@ -23,47 +22,85 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# pytest
+# ============= pytest =============
 .pytest_cache/
 .coverage
+.coverage.*
 coverage.xml
 htmlcov/
 pytest-report.html
 allure-results/
 allure-report/
+.pytest_cache/
+test-results/
+test_logs/
+.mypy_cache/
+.pytest_cache/
+.tox/
+.hypothesis/
 
-# 测试临时文件
+# ============= 测试临时文件 =============
 tests/test_data/*.tmp
 tests/test_data/*.log
 tests/test_data/*.json.bak
 
-# 项目特定
+# ============= 项目特定 =============
 *.log
 logs/
 reports/
 screenshots/
+videos/
+recordings/
 
-# IDE
+# ============= IDE =============
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
 Thumbs.db
+*.sublime-*
 
-# 环境配置文件
+# ============= 环境配置文件 =============
 .env
 .env.local
+.env.*.local
 
-# 临时目录
+# ============= 临时目录 =============
 temp/
 tmp/
+.cache/
 
-# 视频录制文件
+# ============= 视频录制文件 =============
 *.avi
 *.mp4
 *.gif
+*.webm
+
+# ============= Jenkins =============
+.jenkins/
+jenkins.war
+
+# ============= Testmon =============
+.testmondata
+
+# ============= Node =============
+node_modules/
+package-lock.json
+yarn.lock
+
+# ============= Coverage =============
+.coverage
+coverage/
+htmlcov/
+
+# ============= Ruff =============
+.ruff_cache/
+
+# ============= MyPy =============
+.mypy_cache/
+.dmypy.json
+dmypy.json

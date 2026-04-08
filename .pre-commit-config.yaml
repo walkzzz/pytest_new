@@ -1,14 +1,80 @@
+# Pre-commit hooks for code quality
+
 repos:
+  # 代码格式化
   - repo: https://github.com/psf/black
-    rev: 24.2.0
+    rev: 24.10.0
     hooks:
       - id: black
-        language_version: python3.10
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.0.0
-    hooks:
-      - id: flake8
-  - repo: https://github.com/pycqa/isort
+        args: ["--config", "pyproject.toml"]
+
+  # Import 排序
+  - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
     hooks:
       - id: isort
+        args: ["--profile", "black"]
+
+  # Lint 检查
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+
+  # 类型检查
+  - repo: https://github.com/python/mypy
+    rev: v1.14.1
+    hooks:
+      - id: mypy
+        args: ["--config-file", "pyproject.toml", "src/"]
+        pass_filenames: false
+        always_run: true
+
+  # 尾部空白检查
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ["--maxkb", "5000"]
+
+  # pytest 测试（仅单元测试）
+  - repo: local
+    hooks:
+      - id: pytest-unit
+        name: pytest-unit
+        entry: python -m pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        types: [python]
+        args:
+          [
+            "tests/unit/",
+            "-v",
+            "--tb=short",
+            "--maxfail=3",
+          ]
+        stages: [pre-commit]
+
+  # pytest Mock 测试（可选，快速验证）
+  - repo: local
+    hooks:
+      - id: pytest-mock
+        name: pytest-mock
+        entry: python -m pytest
+        language: system
+        pass_filenames: false
+        always_run: false
+        types: [python]
+        args:
+          [
+            "tests/mock/",
+            "-v",
+            "--tb=short",
+            "--maxfail=1",
+          ]
+        stages: [manual]

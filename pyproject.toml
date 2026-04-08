@@ -1,11 +1,14 @@
 [project]
 name = "pytest_new_opt"
-version = "0.1.0"
+version = "2.1.0"
 authors = [
     { name = "walkzzz", email = "your-email@example.com" }
 ]
 description = "Enhanced pytest UI automation framework with custom fixtures and best practices"
 requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "MIT" }
+
 dependencies = [
     "pytest>=9.0.2",
     "pytest-xdist>=3.5.0",
@@ -21,6 +24,7 @@ dependencies = [
     "pillow>=11.1.0",
     "mss>=9.0.1",
     "opencv-python>=4.8.0",
+    "psutil>=6.1.1",
 ]
 
 [project.optional-dependencies]
@@ -31,45 +35,168 @@ dev = [
     "mypy>=1.5.0",
     "pytest-sugar>=0.9.7",
     "ruff>=0.1.0",
+    "pre-commit>=3.5.0",
 ]
 
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# ============ Black 配置 ============
 [tool.black]
 line-length = 120
 target-version = ["py310"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
 
+# ============ Flake8 配置 ============
 [tool.flake8]
 max-line-length = 120
-ignore = ["E203", "W503"]
+ignore = ["E203", "W503", "E501"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".venv",
+    "venv",
+]
 
+# ============ isort 配置 ============
 [tool.isort]
 profile = "black"
 line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+skip_glob = [".git", "__pycache__", "build", "dist", "venv"]
 
+# ============ mypy 配置 ============
 [tool.mypy]
 python_version = "3.10"
 check_untyped_defs = true
 disallow_untyped_defs = false
 ignore_missing_imports = true
+warn_return_any = true
+warn_unused_configs = true
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
 
+[[tool.mypy.overrides]]
+module = ["pytest.*", "pywinauto.*", "allure.*"]
+ignore_missing_imports = true
+
+# ============ Ruff 配置 ============
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+]
+ignore = ["E501", "B008"]
+fixable = ["ALL"]
+unfixable = []
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".venv",
+    "venv",
+    ".pytest_cache",
+]
+
+[tool.ruff.isort]
+known-first-party = ["src"]
+
+# ============ Coverage 配置 ============
 [tool.coverage.run]
 source = ["src"]
 omit = [
     "src/*/__init__.py",
     "src/*/config.py",
-    "tests/*"
+    "tests/*",
+    "**/conftest.py",
 ]
+branch = true
+parallel = true
 
 [tool.coverage.report]
 show_missing = true
 fail_under = 80
-format = ["html", "xml"]
+format = ["html", "xml", "text"]
+skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
 
-[tool.pytest]
+[tool.coverage.html]
+directory = "htmlcov"
+title = "Pytest New Coverage Report"
+
+# ============ pytest 配置 ============
+[tool.pytest.ini_options]
+minversion = "9.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 asyncio_mode = "auto"
+timeout = 300
+addopts = """
+    -v
+    --strict-markers
+    --tb=short
+    --alluredir=allure-results
+    --html=reports/report.html
+    --self-contained-html
+    --testmon
+    --reruns 3
+    --reruns-delay 1
+"""
+markers = [
+    "smoke: 冒烟测试（核心流程）",
+    "regression: 回归测试",
+    "slow: 慢速测试",
+    "api: API测试用例",
+    "ui: UI测试用例",
+    "unit: 单元测试用例",
+    "integration: 集成测试",
+    "skip_ci: 跳过CI执行",
+    "benchmark: 性能基准测试",
+    "debug: 调试专用测试",
+    "rerun: 失败重试测试",
+]
 
 [tool.pytest.plugins]
-# 指定需要加载的插件，避免全量扫描
-# 注释：pytest 8.x+ 支持此配置，加速启动
 required = [
     "pytest_html",
     "pytest_cov",
@@ -77,4 +204,15 @@ required = [
     "allure_pytest",
     "pytest_asyncio",
     "pytest_rerunfailures",
+    "pytest_testmon",
+]
+
+# ============ coverage 输出 ============
+[tool.coverage.run]
+data_file = ".coverage"
+
+[tool.coverage.paths]
+source = [
+    "src/",
+    "*/site-packages/",
 ]
