@@ -1,20 +1,23 @@
 # Pytest New
 
-基于 pytest 的自动化测试框架，集成 pywinauto 和 Allure 报告。
+基于 pytest 的自动化测试框架，集成 pywinauto 和 Allure 报告，支持 YAML 配置和数据驱动测试。
 
 ## 功能特性
 
-- **Pytest 框架**: Python 测试框架
+- **Pytest 9.x+**: 最新版 pytest 测试框架
 - **Pywinauto**: Windows UI 自动化测试
-- **Allure 报告**: 美观的测试报告
+- **Allure 报告**: 美观的测试报告 + HTML 报告
 - **YAML 配置**: 易于使用的测试用例配置
 - **数据驱动**: 支持参数化和数据工厂模式
 - **并行执行**: 支持 pytest-xdist 并行测试
+- **Mock 测试**: 支持无应用验证框架功能
+- **CI/CD**: 集成 Jenkins 本地自动化
 
 ## 环境要求
 
 - Python 3.10+
-- Windows 操作系统
+- Windows 10/11
+- Jenkins 2.541.3 (可选，用于 CI/CD)
 
 ## 安装
 
@@ -44,14 +47,17 @@ copy .env.example .env
 # 运行所有测试
 python -m pytest tests --alluredir=allure-results
 
-# 使用 CLI 工具
-python scripts/cli.py -m login -mk smoke
+# 运行 Mock 测试（无需真实应用）
+python -m pytest tests/mock/ -v
 
-# 使用 PowerShell 脚本
-.\run_test.ps1
+# 运行冒烟测试
+pytest -m smoke
 
-# 使用批处理脚本
-run_test.bat -e test
+# 并行执行
+pytest -n auto --dist loadgroup
+
+# 失败重试
+pytest --reruns 3
 ```
 
 ### 3. 生成报告
@@ -61,24 +67,14 @@ run_test.bat -e test
 allure generate allure-results -o allure-report
 allure open allure-report
 
-# HTML 报告 (自动生成)
+# HTML 报告（自动生成）
 # 报告位于 reports/report.html
 ```
-
-## 运行命令
-
-| 命令 | 说明 |
-|------|------|
-| `pytest -m smoke` | 运行冒烟测试 |
-| `pytest -m regression` | 运行回归测试 |
-| `pytest -k "test_login"` | 运行指定用例 |
-| `pytest -n auto` | 并行执行 |
-| `pytest --cov=src` | 生成覆盖率 |
 
 ## 项目结构
 
 ```
-pytest_new/
+pytest_new_opt/
 ├── src/
 │   ├── core/              # 核心基类
 │   ├── config/            # 配置管理
@@ -88,11 +84,12 @@ pytest_new/
 │   └── pywinauto/         # UI 自动化
 ├── tests/
 │   ├── configs/           # 测试配置 (YAML)
-│   ├── locators/          # 元素定位器
-│   └── test_*.py          # 测试用例
-├── fixtures/              # 可复用 fixture
-├── data/                  # 测试数据
+│   ├── test_data/         # 测试数据 (JSON)
+│   ├── mock/              # Mock 测试
+│   ├── unit/              # 单元测试
+│   └── example/           # 示例测试
 ├── scripts/               # 辅助脚本
+│   └── configure_jenkins.py  # Jenkins 配置
 ├── docs/                  # 文档
 ├── .github/workflows/     # CI/CD 配置
 ├── pytest.ini             # pytest 配置
@@ -100,9 +97,63 @@ pytest_new/
 └── requirements.txt       # 依赖
 ```
 
-## 配置说明
+## 测试类型
 
-测试用例定义在 `tests/configs/` 目录下的 YAML 文件中。
+### 1. Mock 测试（推荐先用）
+
+无需真实应用，验证框架核心功能：
+
+```bash
+python -m pytest tests/mock/ -v
+```
+
+测试用例：
+- `test_config_loading` - 配置加载
+- `test_app_connection` - 应用连接
+- `test_test_case_execution` - 测试用例执行
+- `test_step_execution` - 步骤执行
+- `test_assertion_execution` - 断言执行
+- `test_multiple_test_data` - 多组测试数据
+- `test_connection_failure` - 连接失败处理
+- `test_window_not_found` - 窗口未找到处理
+
+### 2. YAML 配置测试
+
+使用 YAML 配置驱动 UI 测试：
+
+```bash
+python -m pytest tests/test_login_config_no_assert_new.py -v
+```
+
+### 3. 单元测试
+
+```bash
+python -m pytest tests/unit/ -v
+```
+
+## 常用命令
+
+| 命令 | 说明 |
+|------|------|
+| `pytest -m smoke` | 运行冒烟测试 |
+| `pytest -m regression` | 运行回归测试 |
+| `pytest -k "test_login"` | 运行指定用例 |
+| `pytest -n auto` | 并行执行 |
+| `pytest --cov=src` | 生成覆盖率 |
+| `pytest --reruns 3` | 失败重试 |
+| `pytest --testmon` | 增量测试 |
+
+## 测试标记
+
+| 标记 | 说明 |
+|------|------|
+| `@pytest.mark.smoke` | 冒烟测试（核心流程） |
+| `@pytest.mark.regression` | 回归测试 |
+| `@pytest.mark.slow` | 慢速测试 |
+| `@pytest.mark.ui` | UI测试用例 |
+| `@pytest.mark.unit` | 单元测试用例 |
+| `@pytest.mark.rerun` | 失败重试测试 |
+| `@pytest.mark.skip_ci` | 跳过CI执行 |
 
 ## YAML 配置模板
 
@@ -142,15 +193,21 @@ test_cases:
         timeout: "normal"
 ```
 
-## 常用标记
-
-| 标记 | 说明 |
-|------|------|
-| `@pytest.mark.smoke` | 冒烟测试 |
-| `@pytest.mark.regression` | 回归测试 |
-| `@pytest.mark.slow` | 慢速测试 |
-
 ## CI/CD
+
+### Jenkins 本地配置
+
+1. 安装 Jenkins：`choco install jenkins -y`
+2. 访问 http://localhost:8080
+3. 创建 Job，配置构建步骤：
+   ```batch
+   cd /d D:\TraeWorkspace\tryit\pytest_new_opt
+   python -m pip install -r requirements.txt
+   python -m pytest tests/mock/ -v --tb=short --html=reports/report.html
+   ```
+4. 构建结果：SUCCESS
+
+### GitHub Actions
 
 项目已配置 GitHub Actions，每次 push 会自动运行测试。
 
@@ -173,71 +230,45 @@ test_cases:
 - `@pytest.mark.unit`: 单元测试用例
 - `@pytest.mark.skip_ci`: 跳过CI执行（用于本地调试）
 
-## 最佳实践示例
-
-参考 `tests/example/test_user_auth_best_practice.py` 了解完整的测试用例最佳实践。
-
 ## 文档
 
 - [快速开始](docs/quick-start.md)
 - [项目架构](docs/architecture.md)
-- [使用指南](docs/user-guide.md) - 详细使用说明
-- [API 参考](docs/api-reference.md) - 核心模块接口文档
+- [使用指南](docs/user-guide.md)
+- [API 参考](docs/api-reference.md)
 - [并行测试优化](docs/parallel-testing-optimization.md)
 - [断言与调试优化](docs/assertion-debugging-optimization.md)
-- [优化实施总结](reports/optimization-implementation-summary.md)
 - [更新日志](CHANGELOG.md)
 
 ## 优化功能
 
-基于 pytest 7.x/8.x+ 新特性的优化功能已全面集成：
-
 ### 🚀 执行效率优化
-- **智能并行执行**: 支持 `--dist loadgroup` 负载均衡，CPU核心自适应
-- **增量测试**: 集成 `pytest-testmon`，仅运行受代码变更影响的测试
-- **Fixture缓存**: 会话级fixture缓存，减少重复初始化
+- **智能并行执行**: 支持 `--dist loadgroup` 负载均衡
+- **增量测试**: 集成 `pytest-testmon`
+- **失败重试**: 集成 `pytest-rerunfailures`
 
 ### 📝 测试可维护性
-- **高级参数化**: 字典解包、嵌套组合、间接参数化等高级模式
-- **异步测试简化**: `asyncio_mode="auto"` 自动检测异步测试，无需手动标记
-- **插件懒加载**: pytest 8.x+ 插件懒加载，启动速度提升20%-40%
+- **Mock测试**: 无需真实应用验证框架
+- **YAML配置**: 声明式测试用例
+- **数据驱动**: 参数化测试
 
 ### 🔧 调试与报告增强
-- **智能断言**: 自定义断言失败信息，结构化数据断言优化
-- **本地变量展示**: `--showlocals` 自动展示失败用例的变量值
-- **精准调试**: `--trace` 精准断点，条件断点支持
-
-### 🏗️ CI/CD 集成优化
-- **快速失败策略**: `--exitfirst` 在CI中快速失败，节省资源
-- **多版本矩阵**: 支持多Python版本测试矩阵
-- **报告集成**: HTML报告 + Allure报告自动生成
-
-### 📚 示例与文档
-- **示例代码**: 查看 `tests/example/` 目录下的完整示例
-- **详细文档**: 参考 `docs/` 目录下的优化指南
-- **最佳实践**: 遵循 `tests/example/test_user_auth_best_practice.py` 中的模式
-
-### 🚦 快速使用
-```bash
-# 并行执行优化
-pytest -n auto --dist loadgroup
-
-# 增量测试（仅运行受影响的用例）
-pytest --testmon
-
-# 异步测试（自动检测）
-pytest tests/example/test_async_example.py
-
-# 调试优化（显示本地变量）
-pytest --showlocals --tb=short
-```
+- **HTML报告**: 自动生成测试报告
+- **Allure报告**: 丰富的测试报告
+- **中文日志**: UTF-8 编码支持
 
 ### 📈 性能预期
 | 优化项 | 预期性能提升 |
 |--------|--------------|
 | 并行执行 | 30%-70% |
 | 增量测试 | 50%-90% |
-| Fixture缓存 | 20%-50% |
-| 插件懒加载 | 20%-40% |
+| 失败重试 | 减少 flaky 测试 |
 
-查看 [优化实施总结](reports/optimization-implementation-summary.md) 获取完整实施细节。
+---
+
+**版本**: 2.1.0  
+**更新日期**: 2026-04-08  
+**框架**: pytest 9.0.2  
+**Python**: 3.10+  
+**平台**: Windows 10/11  
+**CI/CD**: Jenkins 2.541.3
