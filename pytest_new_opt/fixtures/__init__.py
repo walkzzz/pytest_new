@@ -2,12 +2,58 @@
 Custom pytest fixtures for UI automation testing.
 """
 
+import functools
 import os
 import tempfile
 from pathlib import Path
 from typing import Any, Dict, Generator
 
 import pytest
+
+# 导入断言辅助工具
+from .assertions import (
+    assert_dict_contains,
+    assert_dict_has,
+    assert_eq,
+    assert_equal,
+    assert_list_eq,
+    assert_list_equal,
+    assert_with_context,
+)
+
+# ==================== 缓存装饰器 ====================
+
+
+def cached_fixture(maxsize: int = 1):
+    """
+    缓存fixture结果的装饰器。
+
+    适用于重量级资源初始化，确保在同一测试会话中只初始化一次。
+
+    Args:
+        maxsize: 缓存大小，默认为1（单例）
+
+    Example:
+        @cached_fixture()
+        @pytest.fixture(scope="session")
+        def heavy_resource():
+            return HeavyResource()
+    """
+
+    def decorator(fixture_func):
+        cache = {}
+
+        @functools.wraps(fixture_func)
+        def wrapper(*args, **kwargs):
+            cache_key = (args, tuple(sorted(kwargs.items())))
+            if cache_key not in cache:
+                cache[cache_key] = fixture_func(*args, **kwargs)
+            return cache[cache_key]
+
+        return wrapper
+
+    return decorator
+
 
 # ==================== 通用夹具 ====================
 
@@ -132,3 +178,28 @@ def backend_type(request):
 def timeout_value(request):
     """参数化超时时间"""
     return request.param
+
+
+# 导出断言辅助工具
+__all__ = [
+    # 原有夹具
+    "temp_dir",
+    "env_vars",
+    "project_root",
+    "test_data_dir",
+    "clean_logs_dir",
+    "ui_app_config",
+    "screenshot_context",
+    "temp_test_data",
+    "backend_type",
+    "timeout_value",
+    "cached_fixture",
+    # 断言辅助工具
+    "assert_equal",
+    "assert_eq",
+    "assert_dict_contains",
+    "assert_dict_has",
+    "assert_list_equal",
+    "assert_list_eq",
+    "assert_with_context",
+]

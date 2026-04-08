@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 from datetime import datetime
@@ -171,3 +172,13 @@ def test_hook(request, screen_recorder):
     video_path = screen_recorder.stop_recording(test_name)
     if video_path and os.path.exists(video_path):
         print(f"\n测试视频: {video_path}")
+
+
+@pytest.fixture(autouse=True)
+def test_data_cleanup(request):
+    """每个测试后清理测试数据"""
+    yield
+
+    test_name = request.node.name
+    logger = logging.getLogger(__name__)
+    logger.info(f"清理测试数据: {test_name}")

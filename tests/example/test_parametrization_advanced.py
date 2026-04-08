@@ -17,7 +17,8 @@ import pytest
 )
 def test_addition_basic(x, y, expected):
     """基础参数化 - 元组列表"""
-    assert x + y == expected
+    actual = x + y
+    assert actual == expected, f"加法运算失败: {x} + {y} = {actual}, 期望 {expected}"
 
 
 # ==================== 字典解包参数化（新特性） ====================
@@ -34,7 +35,9 @@ def test_addition_dict_unpacking(data):
     字典解包参数化 - pytest 7.x+ 新特性
     参数直接以字典形式传入，提高可读性
     """
-    assert data["x"] + data["y"] == data["expected"]
+    actual = data["x"] + data["y"]
+    expected = data["expected"]
+    assert actual == expected, f"字典解包加法失败: {data['x']} + {data['y']} = {actual}, 期望 {expected}"
 
 
 # ==================== 嵌套参数组合 ====================
@@ -60,7 +63,10 @@ def test_nested_parametrization(operation, x, y):
         expected_min = 4  # 1×4
         expected_max = 18  # 3×6
 
-    assert expected_min <= result <= expected_max
+    assert expected_min <= result <= expected_max, (
+        f"嵌套参数组合验证失败: operation={operation}, x={x}, y={y}, result={result}, "
+        f"expected range [{expected_min}, {expected_max}]"
+    )
 
 
 # ==================== 参数化与fixture组合 ====================

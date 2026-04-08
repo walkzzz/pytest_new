@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from typing import Optional
 
 import pytest  # noqa: F401
 from allure_commons.types import AttachmentType
@@ -12,10 +13,10 @@ from src.pytest_runner.test_runner import TestRunner
 class BaseTestCase:
     """测试基类 - 封装通用测试逻辑"""
 
-    config_filename: str = None
+    config_filename: Optional[str] = None
     project_name: str = "自动化测试"
-    build_name: str = None
-    testplan_url: str = None
+    build_name: Optional[str] = None
+    testplan_url: Optional[str] = None
     runner: TestRunner = None
     config_path: str = None
     _app_started: bool = False
@@ -33,7 +34,11 @@ class BaseTestCase:
             filename = f"{name}_{timestamp}.png"
             filepath = os.path.join(Settings.SCREENSHOT_DIR, filename)
 
-            if cls.runner and hasattr(cls.runner, "control_factory") and cls.runner.control_factory:
+            if (
+                cls.runner
+                and hasattr(cls.runner, "control_factory")
+                and cls.runner.control_factory
+            ):
                 window = cls.runner.control_factory.window
 
                 window.set_focus()
@@ -60,7 +65,9 @@ class BaseTestCase:
         if cls.config_filename is None:
             raise ValueError("必须设置 config_filename 属性")
 
-        tests_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        tests_dir = os.path.dirname(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        )
         cls.config_path = os.path.join(tests_dir, "tests", cls.config_filename)
         cls.runner = TestRunner(
             config_path=cls.config_path,
@@ -75,7 +82,9 @@ class BaseTestCase:
             cls._capture_screenshot("应用启动")
 
             if not connected:
-                raise RuntimeError(f"无法连接到应用: {cls.runner.app_config.get('process_name', 'unknown')}")
+                raise RuntimeError(
+                    f"无法连接到应用: {cls.runner.app_config.get('process_name', 'unknown')}"
+                )
         cls._app_started = True
 
     @classmethod
@@ -86,7 +95,9 @@ class BaseTestCase:
                 cls._capture_screenshot("应用关闭")
                 cls.runner.disconnect_app(close_app=True)
 
-    def run_test_case(self, test_case_name: str, data_key: str = None, restart_app: bool = False):
+    def run_test_case(
+        self, test_case_name: str, data_key: str = None, restart_app: bool = False
+    ):
         """运行指定测试用例
 
         Args:
@@ -100,9 +111,7 @@ class BaseTestCase:
                     self.runner.disconnect_app(close_app=True)
                 self.runner.connect_app(auto_start=True)
         else:
-            if self.runner._is_connected:
-                self.runner.disconnect_app(close_app=False)
-            if not self.runner.connect_app(auto_start=False):
+            if not self.runner._is_connected:
                 self.runner.connect_app(auto_start=True)
 
         self.runner.run_test_case(test_case_name, data_key)

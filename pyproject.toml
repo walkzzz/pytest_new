@@ -12,12 +12,15 @@ dependencies = [
     "pytest-html>=4.2.0",
     "pytest-cov>=7.0.0",
     "pytest-testmon>=2.0.0",
-    "pytest-asyncio>=1.3.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-rerunfailures>=13.0.0",
     "pywinauto>=0.6.8",
     "allure-pytest>=2.13.5",
     "PyYAML>=6.0.2",
     "python-dotenv>=1.0.1",
     "pillow>=11.1.0",
+    "mss>=9.0.1",
+    "opencv-python>=4.8.0",
 ]
 
 [project.optional-dependencies]
@@ -73,4 +76,5 @@ required = [
     "pytest_xdist",
     "allure_pytest",
     "pytest_asyncio",
+    "pytest_rerunfailures",
 ]

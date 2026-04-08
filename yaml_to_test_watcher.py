@@ -28,10 +28,7 @@ def parse_yaml_test_cases(yaml_path):
 
 
 def generate_test_content(filename, test_cases, test_data, project_name):
-    class_name = "".join(
-        word.capitalize()
-        for word in filename.replace(".yaml", "").replace("_", " ").split()
-    )
+    class_name = "".join(word.capitalize() for word in filename.replace(".yaml", "").replace("_", " ").split())
 
     lines = [
         "import pytest",
@@ -46,9 +43,7 @@ def generate_test_content(filename, test_cases, test_data, project_name):
 
     if not test_cases:
         lines.append("    def test_placeholder(self):")
-        lines.append(
-            '        """Auto-generated test - no test cases found in config"""'
-        )
+        lines.append('        """Auto-generated test - no test cases found in config"""')
         lines.append("        pass")
         warnings.warn(f"警告: {filename} 中未找到测试用例，已使用占位符")
     else:
@@ -62,12 +57,8 @@ def generate_test_content(filename, test_cases, test_data, project_name):
                 for data_key in test_data.keys():
                     test_method_name = f"{case_name}_{data_key}"
                     lines.append(f"    def test_{test_method_name}(self):")
-                    lines.append(
-                        f'        """{case_data.get("description", case_name)} - {data_key}"""'
-                    )
-                    lines.append(
-                        f'        self.run_test_case("{case_name}", data_key="{data_key}")'
-                    )
+                    lines.append(f'        """{case_data.get("description", case_name)} - {data_key}"""')
+                    lines.append(f'        self.run_test_case("{case_name}", data_key="{data_key}")')
                     lines.append("")
 
     lines.append("")
@@ -98,9 +89,7 @@ class YamlToTestHandler(FileSystemEventHandler):
                 return
 
             test_cases, test_data, project_name = parse_yaml_test_cases(yaml_path)
-            content = generate_test_content(
-                filename, test_cases, test_data, project_name
-            )
+            content = generate_test_content(filename, test_cases, test_data, project_name)
 
             with open(test_path, "w", encoding="utf-8") as f:
                 f.write(content)

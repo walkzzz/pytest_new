@@ -57,16 +57,12 @@ class TestSettings:
                     Path(tmpdir) / "screenshots",
                 ):
                     with patch.object(
-                        __import__(
-                            "src.config.settings", fromlist=["Settings"]
-                        ).Settings,
+                        __import__("src.config.settings", fromlist=["Settings"]).Settings,
                         "ALLURE_REPORT_DIR",
                         Path(tmpdir) / "allure-results",
                     ):
                         with patch.object(
-                            __import__(
-                                "src.config.settings", fromlist=["Settings"]
-                            ).Settings,
+                            __import__("src.config.settings", fromlist=["Settings"]).Settings,
                             "LOG_DIR",
                             Path(tmpdir) / "logs",
                         ):
@@ -79,9 +75,7 @@ class TestSettings:
                                 LOG_DIR = Path(tmpdir) / "logs"
 
                             TestSettings.SCREENSHOT_DIR = Path(tmpdir) / "screenshots"
-                            TestSettings.ALLURE_REPORT_DIR = (
-                                Path(tmpdir) / "allure-results"
-                            )
+                            TestSettings.ALLURE_REPORT_DIR = Path(tmpdir) / "allure-results"
                             TestSettings.LOG_DIR = Path(tmpdir) / "logs"
                             TestSettings.ensure_dirs()
                             assert (Path(tmpdir) / "screenshots").exists()

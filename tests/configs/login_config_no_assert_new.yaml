@@ -82,15 +82,14 @@ test_data:
   invalid_nickname_empty:
     avatar_filename: "avatar_海葵_128x128.png"
     signature_filename: "marker.png"
-    nickname: "66"
+    nickname: ""
     password: "123456"
   
   invalid_password_short:
     avatar_filename: "avatar_海葵_128x128.png"
     signature_filename: "marker.png"
-    
-    nickname: "88"
-    password: "123456"
+    nickname: "testuser"
+    password: "12"
 
 # 测试用例模板 - 复用此模板，为每个 test_data 生成测试方法
 test_cases:

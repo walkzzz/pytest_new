@@ -11,10 +11,12 @@ def load_yaml(file_path: str) -> Dict[str, Any]:
 
 
 def load_config(env: Optional[str] = None) -> Dict[str, Any]:
-    env = env or os.getenv("TEST_ENV", "test")
+    env_str = env or os.getenv("TEST_ENV", "test")
+    # Ensure env_str is not None (os.getenv with default returns str)
+    env_str = str(env_str)
     config_dir = Path("tests/configs")
 
-    env_config_path = config_dir / env / "app_config.yaml"
+    env_config_path = config_dir / env_str / "app_config.yaml"
     default_config_path = config_dir / "test" / "app_config.yaml"
 
     if env_config_path.exists():

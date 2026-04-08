@@ -22,7 +22,7 @@ class TreeControl(BaseControl):
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            assert self.element is not None
             self.element.expand(item)
             logger.info(f"展开树形节点: '{item}'")
             return True
@@ -35,7 +35,7 @@ class TreeControl(BaseControl):
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            assert self.element is not None
             self.element.collapse(item)
             logger.info(f"折叠树形节点: '{item}'")
             return True
@@ -48,7 +48,7 @@ class TreeControl(BaseControl):
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            assert self.element is not None
             self.element.select(item)
             logger.info(f"选择树形节点: '{item}'")
             return True
@@ -61,7 +61,7 @@ class TreeControl(BaseControl):
         try:
             if not self._find_element():
                 return []
-
+            assert self.element is not None
             children = (
                 self.element.get_children(parent_item)
                 if parent_item
@@ -78,6 +78,13 @@ class TreeControl(BaseControl):
         try:
             if not self._find_element():
                 return None
+            assert self.element is not None
+            selected = self.element.get_selected_item()
+            logger.debug(f"当前选中节点: {selected}")
+            return selected
+        except Exception as e:
+            logger.error(f"获取当前选中节点失败: {e}")
+            return None
 
             selected = self.element.get_selected_item()
             logger.debug(f"当前选中树形节点: {selected}")

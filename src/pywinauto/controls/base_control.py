@@ -31,7 +31,7 @@ class BaseControl:
         """
         self.window = window
         self.locator = locator
-        self.element = None
+        self.element: Optional[WindowSpecification] = None
         self._find_element()
 
     def _find_element(self) -> bool:
@@ -84,6 +84,7 @@ class BaseControl:
         while time.time() - start_time < timeout:
             try:
                 if self._find_element():
+                    assert self.element is not None
                     self.element.wait(state, timeout=1)
                     logger.debug(f"控件达到状态 '{state}': {self.locator}")
                     return True
@@ -118,8 +119,9 @@ class BaseControl:
                 logger.error(f"控件不可点击: {self.locator}")
                 return False
 
-            self.set_focus()
-
+            if not self.set_focus():
+                return False
+            assert self.element is not None
             if use_input:
                 self.element.click_input()
             else:
@@ -136,7 +138,9 @@ class BaseControl:
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            if not self._find_element():
+                return False
+            assert self.element is not None
             if use_input:
                 self.element.double_click_input()
             else:
@@ -153,7 +157,9 @@ class BaseControl:
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            if not self._find_element():
+                return False
+            assert self.element is not None
             if use_input:
                 self.element.right_click_input()
             else:
@@ -193,7 +199,7 @@ class BaseControl:
         try:
             if not self._find_element():
                 return False
-
+            assert self.element is not None
             self.element.set_focus()
             logger.debug(f"设置控件焦点成功: {self.locator}")
             return True
@@ -211,7 +217,7 @@ class BaseControl:
         try:
             if not self._find_element():
                 return None
-
+            assert self.element is not None
             rect = self.element.rectangle()
             return (rect.left, rect.top, rect.right, rect.bottom)
         except Exception as e:
@@ -231,7 +237,7 @@ class BaseControl:
         try:
             if not self._find_element():
                 return None
-
+            assert self.element is not None
             image = self.element.capture_as_image()
 
             if file_path:
@@ -248,6 +254,7 @@ class BaseControl:
         try:
             if not self._find_element():
                 return False
+            assert self.element is not None
             return self.element.is_visible()
         except Exception:
             return False
@@ -257,6 +264,7 @@ class BaseControl:
         try:
             if not self._find_element():
                 return False
+            assert self.element is not None
             return self.element.is_enabled()
         except Exception:
             return False

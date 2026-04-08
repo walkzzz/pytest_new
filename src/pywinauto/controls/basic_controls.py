@@ -22,6 +22,7 @@ class ButtonControl(BaseControl):
         try:
             if not self._find_element():
                 return None
+            assert self.element is not None
             return self.element.get_toggle_state() == 1
         except Exception as e:
             logger.error(f"检查按钮选中状态失败: {e}")
@@ -64,6 +65,7 @@ class EditControl(BaseControl):
         try:
             if not self.wait_enabled(timeout):
                 return False
+            assert self.element is not None
 
             if clear_first:
                 self.element.set_text("")
@@ -80,7 +82,7 @@ class EditControl(BaseControl):
         try:
             if not self._find_element():
                 return None
-
+            assert self.element is not None
             text = self.element.get_value()
             logger.debug(f"获取文本: '{text}'")
             return text
@@ -92,13 +94,16 @@ class EditControl(BaseControl):
         """清空文本"""
         return self.set_text("", clear_first=False)
 
-    def type_text(self, text: str, with_spaces: bool = True, pause: float = 0.0) -> bool:
+    def type_text(
+        self, text: str, with_spaces: bool = True, pause: float = 0.0
+    ) -> bool:
         """模拟键盘逐字符输入"""
         try:
             if not self.wait_enabled():
                 return False
 
             self.set_focus()
+            assert self.element is not None
             self.element.type_keys(text, with_spaces=with_spaces, pause=pause)
             logger.info(f"键盘输入文本成功: '{text}'")
             return True
@@ -111,6 +116,7 @@ class EditControl(BaseControl):
         try:
             if not self._find_element():
                 return False
+            assert self.element is not None
             return self.element.is_editable()
         except Exception:
             return False
@@ -130,7 +136,7 @@ class ComboBoxControl(BaseControl):
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            assert self.element is not None
             self.element.select(item)
             logger.info(f"选择下拉框项: '{item}'")
             return True
@@ -158,7 +164,7 @@ class ComboBoxControl(BaseControl):
         try:
             if not self._find_element():
                 return []
-
+            assert self.element is not None
             items = self.element.get_items()
             logger.debug(f"下拉框选项: {items}")
             return items
@@ -171,7 +177,7 @@ class ComboBoxControl(BaseControl):
         try:
             if not self._find_element():
                 return None
-
+            assert self.element is not None
             selected = self.element.selected_text()
             logger.debug(f"当前选中项: {selected}")
             return selected
@@ -194,7 +200,7 @@ class ListBoxControl(BaseControl):
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            assert self.element is not None
             self.element.select(item)
             logger.info(f"选择列表项: '{item}'")
             return True
@@ -207,7 +213,7 @@ class ListBoxControl(BaseControl):
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            assert self.element is not None
             items = self.get_items()
             if 0 <= index < len(items):
                 self.element.select(items[index])
@@ -223,7 +229,7 @@ class ListBoxControl(BaseControl):
         try:
             if not self._find_element():
                 return []
-
+            assert self.element is not None
             items = self.element.get_items()
             logger.debug(f"列表项: {items}")
             return items
@@ -236,7 +242,7 @@ class ListBoxControl(BaseControl):
         try:
             if not self._find_element():
                 return []
-
+            assert self.element is not None
             selected = self.element.get_selected_items()
             logger.debug(f"选中项: {selected}")
             return selected
@@ -259,7 +265,7 @@ class TabControl(BaseControl):
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            assert self.element is not None
             self.element.select(tab_name)
             logger.info(f"选择标签页: '{tab_name}'")
             return True
@@ -272,7 +278,7 @@ class TabControl(BaseControl):
         try:
             if not self.wait_enabled(timeout):
                 return False
-
+            assert self.element is not None
             tabs = self.get_tabs()
             if 0 <= index < len(tabs):
                 return self.select_tab(tabs[index])
@@ -287,7 +293,7 @@ class TabControl(BaseControl):
         try:
             if not self._find_element():
                 return []
-
+            assert self.element is not None
             tabs = self.element.get_items()
             logger.debug(f"标签页列表: {tabs}")
             return tabs
@@ -300,7 +306,7 @@ class TabControl(BaseControl):
         try:
             if not self._find_element():
                 return None
-
+            assert self.element is not None
             selected = self.element.get_selected_tab()
             logger.debug(f"当前标签页: {selected}")
             return selected

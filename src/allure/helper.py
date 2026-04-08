@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from allure_commons.types import AttachmentType
 
@@ -9,12 +9,14 @@ class AllureHelper:
     """Allure报告辅助工具"""
 
     @staticmethod
-    def add_attachment(name: str, content: str, attachment_type: AttachmentType = AttachmentType.TEXT):
+    def add_attachment(
+        name: str, content: str, attachment_type: AttachmentType = AttachmentType.TEXT
+    ):
         """添加附件"""
         allure.attach(content, name, attachment_type)
 
     @staticmethod
-    def add_link(url: str, name: str = None, link_type: str = None):
+    def add_link(url: str, name: Optional[str] = None, link_type: Optional[str] = None):
         """添加链接"""
         if link_type == "issue":
             allure.issue(url=url, name=name)
@@ -43,15 +45,15 @@ class AllureHelper:
 
     @staticmethod
     def add_test_case_info(
-        title: str = None,
-        description: str = None,
-        severity: str = None,
-        epic: str = None,
-        feature: str = None,
-        story: str = None,
-        suite: str = None,
-        layer: str = None,
-        tags: List[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        severity: Optional[str] = None,
+        epic: Optional[str] = None,
+        feature: Optional[str] = None,
+        story: Optional[str] = None,
+        suite: Optional[str] = None,
+        layer: Optional[str] = None,
+        tags: Optional[List[str]] = None,
     ):
         """添加测试用例信息"""
         if title:

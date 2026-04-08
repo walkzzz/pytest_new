@@ -98,7 +98,7 @@ def app_config_cached(request):
 def test_heavy_resource_old(heavy_resource_old):
     """测试传统fixture"""
     result = heavy_resource_old.query("timestamp")
-    assert result is not None
+    assert result is not None, f"重量级资源查询结果不应为None，实际得到: {result}"
     print(f"传统fixture查询结果: {result}")
 
 
@@ -106,14 +106,14 @@ def test_heavy_resource_cached(heavy_resource_cached):
     """测试缓存fixture"""
     resource = heavy_resource_cached()  # 调用函数获取资源
     result = resource.query("timestamp")
-    assert result is not None
+    assert result is not None, f"缓存资源查询结果不应为None，实际得到: {result}"
     print(f"缓存fixture查询结果: {result}")
 
 
 def test_app_config_cached(app_config_cached):
     """测试参数化fixture缓存"""
-    assert "version" in app_config_cached
-    assert "features" in app_config_cached
+    assert "version" in app_config_cached, f"配置中应包含'version'键，实际配置: {app_config_cached}"
+    assert "features" in app_config_cached, f"配置中应包含'features'键，实际配置: {app_config_cached}"
     print(f"配置版本: {app_config_cached['version']}")
 
 
@@ -133,7 +133,9 @@ class TestFixturePerformance:
         """多次调用缓存fixture"""
         for i in range(5):
             resource = heavy_resource_cached()
-            assert resource.query("loaded") is True
+            assert (
+                resource.query("loaded") is True
+            ), f"第{i + 1}次调用缓存资源，loaded应为True，实际得到: {resource.query('loaded')}"
 
     def test_config_reuse(self, app_config_cached):
         """参数化fixture重用"""
@@ -169,8 +171,12 @@ if lru_cache:
         config2 = config_loader("/path/to/config2.yaml")
         config1_again = config_loader("/path/to/config1.yaml")  # 应该从缓存获取
 
-        assert config1 is config1_again  # 相同对象（缓存生效）
-        assert config1 is not config2  # 不同对象
+        assert (
+            config1 is config1_again
+        ), f"LRU缓存应返回相同对象，但config1 ({id(config1)}) != config1_again ({id(config1_again)})"
+        assert (
+            config1 is not config2
+        ), f"不同配置路径应返回不同对象，但config1 ({id(config1)}) == config2 ({id(config2)})"
 
 
 if __name__ == "__main__":

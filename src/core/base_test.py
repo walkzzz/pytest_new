@@ -2,7 +2,7 @@ from typing import Optional
 
 
 class BaseTest:
-    config_filename: str = None
+    config_filename: Optional[str] = None
     project_name: str = "自动化测试"
     build_name: Optional[str] = None
     testplan_url: Optional[str] = None

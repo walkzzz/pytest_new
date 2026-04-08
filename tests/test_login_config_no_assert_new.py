@@ -1,22 +1,24 @@
 import pytest
-
 from src.pytest_runner import BaseTestCase
 
 
-class TestLoginConfigNoAssertNew(BaseTestCase):
+class TestRegistrationFlow(BaseTestCase):
     config_filename = "configs/login_config_no_assert_new.yaml"
     project_name = "注册测试"
 
-    def test_registration_flow_normal_registration(self):
-        """注册流程测试 - normal_registration"""
+    @pytest.mark.smoke
+    def test_registration_with_valid_data(self):
+        """正常注册流程 - 验证完整注册功能"""
         self.run_test_case("registration_flow", data_key="normal_registration")
 
-    def test_registration_flow_invalid_nickname_empty(self):
-        """注册流程测试 - invalid_nickname_empty"""
+    @pytest.mark.regression
+    def test_registration_with_empty_nickname(self):
+        """负向测试 - 空昵称应该注册失败"""
         self.run_test_case("registration_flow", data_key="invalid_nickname_empty")
 
-    def test_registration_flow_invalid_password_short(self):
-        """注册流程测试 - invalid_password_short"""
+    @pytest.mark.regression
+    def test_registration_with_short_password(self):
+        """负向测试 - 短密码应该注册失败"""
         self.run_test_case("registration_flow", data_key="invalid_password_short")
 
 
